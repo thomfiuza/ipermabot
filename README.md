@@ -76,6 +76,7 @@ node tools/scripts/review.mjs
 
 | Quer entender | Leia |
 |---|---|
+| 📚 **Mapa absoluto do projeto** | [**docs/analise/MEGA_DOCUMENTO.md**](docs/analise/MEGA_DOCUMENTO.md) |
 | Visão de negócio / mercado | [docs/arquitetura/DOSSIE_VIABILIDADE.md](docs/arquitetura/DOSSIE_VIABILIDADE.md) |
 | Protocolo entre app ↔ ESP32 | [docs/protocolo/PROTOCOLO_COMUNICACAO.md](docs/protocolo/PROTOCOLO_COMUNICACAO.md) |
 | Como rodar o app | [docs/arquitetura/MVP_APP.md](docs/arquitetura/MVP_APP.md) |
