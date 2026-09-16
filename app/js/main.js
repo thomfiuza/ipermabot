@@ -13,6 +13,7 @@ import { tratarResposta, tratarTelemetria, tratarEvento } from './protocol.js';
 import { simulador } from './simulator.js';
 import { log, logBook } from './log.js';
 import { metricas } from './metrics.js';
+import { salvarObra, listarObras, deletarObra, gerarRelatorioHTML, resumoObra } from './works.js';
 import { ui } from './ui.js';
 import {
   holdToConfirm,
@@ -299,6 +300,97 @@ const _bindEventos = () => {
     ui.toast('Log exportado', 'ok');
   });
 
+  /* TELA 5 — LOG: botão "Relatório PDF" (Diferencial #7) */
+  document.getElementById('btn-relatorio-pdf').addEventListener('click', () => {
+    const eventosArr = logBook.todos();
+    const obra = salvarObra(config.nome, estado, config, eventosArr);
+    const html = gerarRelatorioHTML(obra, metricas.snapshots);
+    const w = window.open('', 'relatorio', 'width=900,height=1100');
+    if (w) {
+      w.document.open();
+      w.document.write(html);
+      w.document.close();
+      log('info', 'Relatório PDF gerado', obra.nome);
+      ui.toast('Relatório aberto em nova janela', 'ok');
+    } else {
+      ui.toast('Popup bloqueado — permita popups para gerar PDF', 'erro');
+    }
+  });
+
+  /* TELA 5 — LOG: botão "Salvar obra" (Diferencial #9 - galeria multi-obra) */
+  document.getElementById('btn-salvar-obra').addEventListener('click', () => {
+    const eventosArr = logBook.todos();
+    const obra = salvarObra(config.nome, estado, config, eventosArr);
+    log('sucesso', 'Obra salva na galeria', `${obra.nome} (${(obra.estado.m2_feitos || 0).toFixed(1)} m²)`);
+    ui.toast('Obra salva', 'ok');
+    // Atualiza galeria se ela estiver aberta
+    if (typeof window.atualizarGaleria === 'function') window.atualizarGaleria();
+  });
+
+  /* TELA 6 — GALERIA (Diferencial #9) */
+  const btnVoltarGaleria = document.getElementById('btn-voltar-galeria');
+  if (btnVoltarGaleria) {
+    btnVoltarGaleria.addEventListener('click', () => ui.mostrarTela('tela-dashboard'));
+  }
+  // Expor para outros handlers poderem chamar
+  window.atualizarGaleria = () => {
+    const cont = document.getElementById('lista-galeria');
+    if (!cont) return;
+    const obras = listarObras().reverse();
+    if (obras.length === 0) {
+      cont.innerHTML = '<p style="text-align:center;color:var(--texto-med);padding:24px">'
+        + 'Nenhuma obra salva ainda.<br><small>Use "Salvar obra" na aba Eventos para começar.</small></p>';
+      return;
+    }
+    cont.innerHTML = obras.map(o => {
+      const r = resumoObra(o);
+      const dur = (function(s){
+        const hh=Math.floor(s/3600),mm=Math.floor((s%3600)/60),ss=s%60;
+        return `${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}:${String(ss).padStart(2,'0')}`;
+      })(r.duracao);
+      return `
+        <article class="obra-card">
+          <h3>${escapeHTML(r.nome)}</h3>
+          <p class="obra-meta">${new Date(r.data).toLocaleString('pt-BR')} · ${dur}</p>
+          <div class="obra-progresso" style="background:#E5E7EB;border-radius:4px;height:8px;overflow:hidden">
+            <div style="background:#2E7D32;height:100%;width:${r.pct}%"></div>
+          </div>
+          <p class="obra-stats"><strong>${r.m2_feitos.toFixed(1)} m²</strong> de ${(o.estado.m2_total || o.config.m2_total || 0).toFixed(1)} m² (${r.pct}%)</p>
+          <div class="obra-btns">
+            <button class="btn-sec" data-acao="pdf" data-id="${o.id}">📄 PDF</button>
+            <button class="btn-sec" data-acao="excluir" data-id="${o.id}">🗑 Excluir</button>
+          </div>
+        </article>`;
+    }).join('');
+    cont.querySelectorAll('button[data-acao]').forEach(b => {
+      b.addEventListener('click', () => {
+        const acao = b.dataset.acao;
+        const id = b.dataset.id;
+        const obra = listarObras().find(x => x.id === id);
+        if (!obra) return;
+        if (acao === 'pdf') {
+          const html = gerarRelatorioHTML(obra, []);
+          const w = window.open('', '_blank', 'width=900,height=1100');
+          if (w) { w.document.open(); w.document.write(html); w.document.close(); }
+        } else if (acao === 'excluir') {
+          if (confirm(`Excluir obra "${obra.nome}"?`)) {
+            deletarObra(id);
+            window.atualizarGaleria();
+            ui.toast('Obra excluída', 'ok');
+          }
+        }
+      });
+    });
+  };
+  // Atualiza ao abrir a tela
+  const btnAbrirGaleria = document.getElementById('btn-abrir-galeria');
+  if (btnAbrirGaleria) {
+    btnAbrirGaleria.addEventListener('click', () => {
+      ui.mostrarTela('tela-galeria');
+      window.atualizarGaleria();
+    });
+  }
+
   /* SERVICE WORKER (PWA) */
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
@@ -319,6 +411,15 @@ const _init = () => {
   ui.atualizarConexao();
   ui.atualizarDashboard();
   logBook.onChange = () => ui.atualizarLog();
+  // Listener do Diferencial #2 — alerta de produto vs obra restante
+  window.addEventListener('impbot:alerta-produto', (ev) => {
+    const a = ev.detail;
+    if (a && a.msg) {
+      const tipo = a.nivel === 'critico' ? 'erro' : 'warn';
+      log(tipo, 'PRODUTO vs OBRA', a.msg);
+      ui.toast(a.msg, tipo === 'erro' ? 'erro' : 'warn');
+    }
+  });
   log('info', 'App aberto', 'IMP-BOT v1.0 carregado');
 };
 
@@ -330,5 +431,12 @@ if (document.readyState === 'loading') {
 
 // Expor para debug no DevTools (apenas em dev)
 if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
-  window.__impbot_debug = { config, estado, ws, simulador, log, logBook, ui };
+  window.__impbot_debug = { config, estado, ws, simulador, log, logBook, ui, metricas };
+}
+
+// Helper de escape (usado na galeria)
+function escapeHTML(s) {
+  return String(s === null || s === undefined ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
