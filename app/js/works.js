@@ -7,8 +7,8 @@
  *  - Diferencial #7: Relatório PDF da obra (gera HTML imprimível)
  */
 
-const OBRAS_KEY = 'impbot_obras_v1';
-const GEOFENCE_KEY = 'impbot_geofence_v1';
+const OBRAS_KEY = 'ipermabot_obras_v1';
+const GEOFENCE_KEY = 'ipermabot_geofence_v1';
 
 /* ============================================================
    #9 — HISTÓRICO MULTI-OBRA

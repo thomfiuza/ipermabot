@@ -71,7 +71,7 @@ Seguimos [Conventional Commits](https://www.conventionalcommits.org/):
 ## Onde pedir ajuda
 
 - Abra uma **Issue** com label `question`.
-- Para coisas urgentes (bug de segurança): `security@impbot.local` (crie se necessário).
+- Para coisas urgentes (bug de segurança): `security@ipermabot.local` (crie se necessário).
 
 ## Código de Conduta
 

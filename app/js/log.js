@@ -7,7 +7,7 @@
  * @module log
  */
 
-const CHAVE_LOG = 'impbot_log_v1';
+const CHAVE_LOG = 'ipermabot_log_v1';
 const MAX_EVENTOS = 200;
 
 /** Singleton de log (apenas um por sessão de app). */

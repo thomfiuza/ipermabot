@@ -14,7 +14,7 @@ import { detectarEsgotamento, produtoById } from './produtos.js';
 
 /** Limites */
 const MAX_SNAPSHOTS = 720;   // 12 horas @ 1 amostra/min
-const SAMPLES_KEY = 'impbot_metrics_v1';
+const SAMPLES_KEY = 'ipermabot_metrics_v1';
 
 /**
  * Singleton de métricas.
@@ -102,7 +102,7 @@ class Metricas {
     const alerta = this.alertaProdutoRestante(estado, config);
     if (alerta.nivel !== 'ok' && alerta.nivel !== this._ultimaAlertaNivel) {
       if (typeof window !== 'undefined' && window.dispatchEvent) {
-        window.dispatchEvent(new CustomEvent('impbot:alerta-produto', { detail: alerta }));
+        window.dispatchEvent(new CustomEvent('ipermabot:alerta-produto', { detail: alerta }));
       }
     }
     this._ultimaAlertaNivel = alerta.nivel;

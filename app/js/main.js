@@ -384,7 +384,7 @@ const _bindEventos = () => {
   document.getElementById('btn-exportar').addEventListener('click', () => {
     const nomeSafe = config.nome.replace(/[^a-z0-9-_]/gi, '_');
     downloadTexto(
-      `impbot_${nomeSafe}_${new Date().toISOString().slice(0, 10)}.txt`,
+      `ipermabot_${nomeSafe}_${new Date().toISOString().slice(0, 10)}.txt`,
       logBook.exportarTxt(config.nome)
     );
     ui.toast('Log exportado', 'ok');
@@ -502,7 +502,7 @@ const _init = () => {
   ui.atualizarDashboard();
   logBook.onChange = () => ui.atualizarLog();
   // Listener do Diferencial #2 — alerta de produto vs obra restante
-  window.addEventListener('impbot:alerta-produto', (ev) => {
+  window.addEventListener('ipermabot:alerta-produto', (ev) => {
     const a = ev.detail;
     if (a && a.msg) {
       const tipo = a.nivel === 'critico' ? 'erro' : 'warn';
@@ -521,7 +521,7 @@ if (document.readyState === 'loading') {
 
 // Expor para debug no DevTools (apenas em dev)
 if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
-  window.__impbot_debug = { config, estado, ws, simulador, log, logBook, ui, metricas };
+  window.__ipermabot_debug = { config, estado, ws, simulador, log, logBook, ui, metricas };
 }
 
 // Helper de escape (usado na galeria)

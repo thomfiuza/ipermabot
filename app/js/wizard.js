@@ -20,7 +20,7 @@
  * @module wizard
  */
 
-const ESTADO_KEY = 'impbot_wizard_v1';
+const ESTADO_KEY = 'ipermabot_wizard_v1';
 
 /** Passos do wizard. Função `podeAvancar(ctx)` opcional para gate. */
 export const PASSOS = [

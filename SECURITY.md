@@ -53,7 +53,7 @@ Substitua pelo email real do time antes de publicar.
 Antes de colocar o robô em campo:
 
 - [ ] Senha única por cliente no AP Wi-Fi do ESP32
-- [ ] Firmware >= 1.0.0 (todas correções aplicadas)
+- [ ] Firmware >= 1.0.1 (todas correções aplicadas)
 - [ ] PWA hospedado em HTTPS (GitHub Pages suporta)
 - [ ] Botão de emergência testado fisicamente
 - [ ] Botoeira de emergência acessória (trava mecânica recomendada)

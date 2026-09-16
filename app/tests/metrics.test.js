@@ -116,7 +116,7 @@ _('resetar limpa snapshots e cria estado inicial', () => {
 _('persistência: salva em localStorage', () => {
   metricas.resetar();
   metricas.adicionarAmostra({ m2_feitos: 10, bateria: 95, produto: 90, faixa: 1, tempo_inicio: Date.now() - 60_000 });
-  const salvo = localStorage.getItem('impbot_metrics_v1');
+  const salvo = localStorage.getItem('ipermabot_metrics_v1');
   _eq(salvo !== null && salvo !== undefined, true);
   if (salvo && !salvo.includes('m2_feitos') && !salvo.includes('m2')) {
     if (!salvo.includes('100') && !salvo.includes('10')) {

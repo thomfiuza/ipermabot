@@ -64,13 +64,13 @@ export const criarEstado = () => {
 
   // Carregar config persistido (se houver)
   try {
-    const salvo = localStorage.getItem('impbot_config_v1');
+    const salvo = localStorage.getItem('ipermabot_config_v1');
     if (salvo) Object.assign(config, JSON.parse(salvo));
   } catch (_) { /* ignore */ }
 
   const salvarConfig = () => {
     try {
-      localStorage.setItem('impbot_config_v1', JSON.stringify(config));
+      localStorage.setItem('ipermabot_config_v1', JSON.stringify(config));
     } catch (_) { /* ignore */ }
   };
 

@@ -519,7 +519,7 @@ Custos baseados em mercado BR ($BRL). Versão R1 — protótipo homologável.
 ## 10. Documentos complementares
 
 - **Esquemático elétrico (Kicad)**: `assets/esquematico.kicad_pcb`
-- **Modelo 3D (STEP)**: `assets/impbot_v1.step`
+- **Modelo 3D (STEP)**: `assets/ipermabot_v1.step`
 - **Documento ANATEL para homologação**: `docs/regulatorio/ANATEL.md` (TODO V1.1)
 - **Manual do usuário**: `MANUAL.md` (TODO V1.1)
 - **Roteiro de calibração assistida**: `CALIBRACAO.md` (TODO V1.1)

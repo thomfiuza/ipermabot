@@ -56,16 +56,16 @@ Acessível também no celular (mesma rede):
 
 ```bash
 # 2.1 Build
-docker build -t impbot/pwa:1.0.0 .
+docker build -t ipermabot/pwa:1.0.1 .
 
 # 2.2 Run simples
-docker run -d -p 8080:8080 --name impbot-pwa impbot/pwa:1.0.0
+docker run -d -p 8080:8080 --name ipermabot-pwa ipermabot/pwa:1.0.1
 
 # 2.3 OU com docker compose
 docker compose up -d
 
 # 2.4 Logs
-docker logs -f impbot-pwa
+docker logs -f ipermabot-pwa
 
 # 2.5 Acessar
 #   → http://localhost:8080/
@@ -102,17 +102,17 @@ Para custom domain: Settings › Pages › Custom domain.
 ```bash
 # 3.2.1 Build pacote final
 node tools/scripts/release.mjs
-# Cria dist/impbot-v1.0.0.zip + .sha256
+# Cria dist/ipermabot-v1.0.1.zip + .sha256
 
 # 3.2.2 Copiar para o servidor
-scp dist/impbot-v1.0.0.* servidor:/var/www/impbot/
+scp dist/ipermabot-v1.0.1.* servidor:/var/www/ipermabot/
 
 # 3.2.3 Configurar nginx exemplo
-cat > /etc/nginx/sites-available/impbot <<'NGINX'
+cat > /etc/nginx/sites-available/ipermabot <<'NGINX'
 server {
   listen 443 ssl http2;
   server_name ipermabot.exemplo.com;
-  root /var/www/impbot/impbot-v1.0.0;
+  root /var/www/ipermabot/ipermabot-v1.0.1;
   index index.html;
 
   # PWA precisa
@@ -135,7 +135,7 @@ server {
   ssl_certificate_key /etc/letsencrypt/live/ipermabot.exemplo.com/privkey.pem;
 }
 NGINX
-sudo ln -s /etc/nginx/sites-available/impbot /etc/nginx/sites-enabled/
+sudo ln -s /etc/nginx/sites-available/ipermabot /etc/nginx/sites-enabled/
 sudo nginx -t && sudo systemctl reload nginx
 ```
 
@@ -195,8 +195,8 @@ arduino-cli upload \
 Abra o monitor serial (115200 8N1):
 ```
 ========================================
-  ROBO APLICADOR DE IMPERMEABILIZANTE
-  Firmware v1.0.0 (0x010000) — inicializando...
+  Ipermabot — Robô Aplicador de Impermeabilizante
+  Firmware v1.0.1 (0x010001) — inicializando...
 ========================================
 ...
 [IMU] Inicializado em modo NDOF (9-DoF + compass)
@@ -325,8 +325,8 @@ Ver `SECURITY.md` para política completa. Resumo rápido:
 ### Verificar SHA256 do release
 
 ```bash
-sha256sum -c impbot-v1.0.0.zip.sha256
-# Esperado: impbot-v1.0.0.zip: OK
+sha256sum -c ipermabot-v1.0.1.zip.sha256
+# Esperado: ipermabot-v1.0.1.zip: OK
 ```
 
 ---

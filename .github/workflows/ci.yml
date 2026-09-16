@@ -105,16 +105,16 @@ jobs:
           cd app
           rm -rf node_modules || true
           cd ..
-          zip -r impbot-pwa-${{ github.sha }}.zip app/ -x '**/*.bundle' '**/.git/*' '**/node_modules/*'
+          zip -r ipermabot-pwa-${{ github.sha }}.zip app/ -x '**/*.bundle' '**/.git/*' '**/node_modules/*'
       - name: #️⃣ Gerar checksum
-        run: sha256sum impbot-pwa-${{ github.sha }}.zip > impbot-pwa-${{ github.sha }}.sha256
+        run: sha256sum ipermabot-pwa-${{ github.sha }}.zip > ipermabot-pwa-${{ github.sha }}.sha256
       - name: 📤 Upload artefacto
         uses: actions/upload-artifact@v4
         with:
-          name: impbot-pwa-zip
+          name: ipermabot-pwa-zip
           path: |
-            impbot-pwa-${{ github.sha }}.zip
-            impbot-pwa-${{ github.sha }}.sha256
+            ipermabot-pwa-${{ github.sha }}.zip
+            ipermabot-pwa-${{ github.sha }}.sha256
           retention-days: 30
 
   # ──────────────────────────────────────────────────────────
@@ -133,14 +133,14 @@ jobs:
           fetch-depth: 0
       - uses: actions/download-artifact@v4
         with:
-          name: impbot-pwa-zip
+          name: ipermabot-pwa-zip
           path: dist/
       - name: 🚀 Publicar release no GitHub
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            dist/impbot-pwa-${{ github.sha }}.zip
-            dist/impbot-pwa-${{ github.sha }}.sha256
+            dist/ipermabot-pwa-${{ github.sha }}.zip
+            dist/ipermabot-pwa-${{ github.sha }}.sha256
           generate_release_notes: true
           draft: false
           prerelease: ${{ contains(github.ref, 'rc') }}

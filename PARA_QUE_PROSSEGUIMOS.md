@@ -82,7 +82,7 @@ eu não posso fazer pelo simples fato de não ter acesso pessoal ao mundo real.
 #### Email / Conta de email dedicada
 | Sistema | Para quê | Status |
 |---|---|---|
-| **Email impbot.local** ou similar | Receber NF, contato de cliente, marketing | ⬜ criar |
+| **Email ipermabot.local** ou similar | Receber NF, contato de cliente, marketing | ⬜ criar |
 | **Gmail/Outlook dedicado** | Conta admin de tudo, separada do seu pessoal | ⬜ criar |
 | **LinkedIn da empresa** | Prospecção, presença formal | ⬜ criar |
 
@@ -101,8 +101,8 @@ eu não posso fazer pelo simples fato de não ter acesso pessoal ao mundo real.
 |---|---|---|
 | **GitHub (conta pessoal ou Org)** | Hospedar o repositório | Grátis (free) ou US$ 4/mês (Pro) |
 | **Vercel / Netlify** | Hospedar o PWA publicamente | Grátis até 100k visitas |
-| **Google Workspace** (opcional) | Email impbot@seudominio.com.br | R$ 30/mês por usuário |
-| **Registro de domínio (.com.br)** | impbot.com.br | R$ 40/ano |
+| **Google Workspace** (opcional) | Email ipermabot@seudominio.com.br | R$ 30/mês por usuário |
+| **Registro de domínio (.com.br)** | ipermabot.com.br | R$ 40/ano |
 
 ---
 

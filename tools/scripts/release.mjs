@@ -93,7 +93,7 @@ writeFileSync(changelogPath, cl);
 console.log(`✅ CHANGELOG.md`);
 
 if (!existsSync(DIST)) mkdirSync(DIST);
-const zipName = `impbot-v${versao}.zip`;
+const zipName = `ipermabot-v${versao}.zip`;
 const zipPath = join(DIST, zipName);
 
 console.log(`\n📦 Empacotando app/ → ${zipName}...`);
@@ -108,7 +108,7 @@ writeFileSync(sumPath, `${sha256}  ${zipName}\n`);
 console.log(`✅ ${zipName}.sha256: ${sha256.substring(0, 16)}...`);
 
 const bundlePath = join(RAIZ, 'projeto-robo-impermeabilizador.bundle');
-const bundleDist = join(DIST, `impbot-v${versao}.bundle`);
+const bundleDist = join(DIST, `ipermabot-v${versao}.bundle`);
 try {
   execSync(`git bundle create '${bundlePath}' --all`, { cwd: RAIZ, stdio: 'pipe' });
   copyFileSync(bundlePath, bundleDist);

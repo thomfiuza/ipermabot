@@ -143,7 +143,7 @@
 | Dev freelancer (60 dias × R$ 220/dia) | R$ 13.200 | Pleno |
 | Design UI/UX (wireframes + identidade) | R$ 3.500 | Uma vez só |
 | Conta Vercel (deploy) | R$ 0 | Plano free |
-| Domínio (impbot.com.br) | R$ 50/ano | |
+| Domínio (ipermabot.com.br) | R$ 50/ano | |
 | Apple Store/Play Store (se virar nativo) | R$ 250/ano | opcional |
 | **TOTAL MVP** | **R$ 17.000** | |
 
