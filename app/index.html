@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1F4E79">
+<meta name="description" content="IMP-BOT: painel de controle do robô aplicador de impermeabilizante.">
+<meta name="author" content="IMP-BOT Team">
+
+<title>IMP-BOT · Painel de Controle</title>
+
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%231F4E79'/%3E%3Ctext x='50' y='65' font-size='50' text-anchor='middle' fill='white' font-weight='bold' font-family='sans-serif'%3EI%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+<!-- ================================================
+     IMP-BOT — Progressive Web App
+     Ponto único de entrada. Lógica modular via ES6.
+     Versão: ver package.json / CHANGELOG.md
+     ================================================ -->
+
+<!-- TELA 1 — CONEXÃO -->
+<section id="tela-conexao" class="tela ativa" aria-hidden="false">
+  <div class="header-azul">
+    <h1>IMP-BOT</h1>
+    <p class="sub">Conectando ao robô impermeabilizador</p>
+  </div>
+  <div class="conteudo-central">
+    <div class="spinner" id="spin-conexao" role="status"></div>
+    <p id="txt-status-conexao">Procurando Wi-Fi do robô…</p>
+    <button class="btn btn-primario btn-grande" id="btn-tentar-conexao" type="button">
+      ↻ Tentar novamente
+    </button>
+    <button class="btn btn-fantasma btn-grande" id="btn-modo-simulacao" type="button">
+      ▶ Entrar em modo simulação
+    </button>
+    <p class="info-versao">Firmware 1.0.0 · Protocolo de comunicação v1.0</p>
+    <p class="info-versao">
+      <a href="../docs/arquitetura/MVP_APP.md">Especificação do app</a> ·
+      <a href="../docs/protocolo/PROTOCOLO_COMUNICACAO.md">Protocolo</a>
+    </p>
+  </div>
+</section>
+
+<!-- TELA 2 — DASHBOARD -->
+<section id="tela-dashboard" class="tela" aria-hidden="true">
+  <header class="topo">
+    <span id="lbl-obra">Obra: Laje Teste</span>
+    <button id="btn-menu" class="btn-icone" type="button" title="Menu" aria-label="Menu">☰</button>
+  </header>
+
+  <div class="card-status estado-parado" id="card-status">
+    <span class="lbl-status">STATUS</span>
+    <h2 id="h-estado">Pronto para iniciar</h2>
+    <p id="p-faixa-info">— · 0% concluído</p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card-metrica">
+      <span class="lbl-metrica">m² APLICADOS</span>
+      <span class="val-metrica" id="m-m2">0</span>
+      <span class="sub-metrica" id="m-m2-esp">de 240 m²</span>
+    </div>
+    <div class="card-metrica">
+      <span class="lbl-metrica">TEMPO</span>
+      <span class="val-metrica" id="m-tempo">00:00:00</span>
+      <span class="sub-metrica" id="m-tempo-sub">operação</span>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card-metrica">
+      <span class="lbl-metrica">BATERIA</span>
+      <div class="barra" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+        <div id="b-bateria" class="b-fundo bom" style="width:0%"></div>
+      </div>
+      <span class="sub-metrica" id="m-bateria">0%</span>
+    </div>
+    <div class="card-metrica">
+      <span class="lbl-metrica">PRODUTO</span>
+      <div class="barra" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+        <div id="b-produto" class="b-fundo bom" style="width:0%"></div>
+      </div>
+      <span class="sub-metrica" id="m-produto">100%</span>
+    </div>
+  </div>
+
+  <div id="alertas" class="alertas" role="alert" hidden></div>
+
+  <div class="botoes-grandes">
+    <button id="btn-iniciar" class="acao acao-verde" type="button">
+      <span class="icone-grande" aria-hidden="true">▶</span>
+      <span class="rotulo-acao">Iniciar</span>
+    </button>
+    <button id="btn-pausar" class="acao acao-amarela" type="button" disabled>
+      <span class="icone-grande" aria-hidden="true">⏸</span>
+      <span class="rotulo-acao">Pausar</span>
+    </button>
+    <button id="btn-parar" class="acao acao-vermelha" type="button">
+      <span class="icone-grande" aria-hidden="true">⏹</span>
+      <span class="rotulo-acao">Parar</span>
+    </button>
+  </div>
+
+  <div class="acoes-secundarias">
+    <button class="btn btn-secundario" id="btn-emergencia" type="button">
+      🛑 Emergência (segurar 3s)
+    </button>
+  </div>
+
+  <nav class="tab-bar" role="tablist">
+    <button class="tab ativo" data-tab="principal" role="tab" type="button">Início</button>
+    <button class="tab" data-tab="config" role="tab" type="button">Obra</button>
+    <button class="tab" data-tab="log" role="tab" type="button">Eventos</button>
+  </nav>
+</section>
+
+<!-- TELA 3 — EMERGÊNCIA -->
+<section id="tela-emergencia" class="tela tela-emergencia" aria-hidden="true">
+  <div class="emergencia">
+    <div class="emoji-emergencia" aria-hidden="true">🛑</div>
+    <h1>EMERGÊNCIA</h1>
+    <p class="sub-emergencia">Robô parado por segurança.</p>
+    <div class="card-emergencia">
+      <span class="lbl-emergencia">CAUSA PROVÁVEL</span>
+      <h3 id="causa-emergencia">—</h3>
+      <p id="detalhe-emergencia">—</p>
+    </div>
+    <p class="aviso-emergencia">
+      ⚠️ Vá ao robô, verifique se a área é segura antes de retomar.
+    </p>
+    <button id="btn-reset-emergencia" class="btn-bloqueio" type="button">
+      <span>Desbloquear e Retomar</span>
+      <small>segure por <span id="contador-emergencia">3</span>s</small>
+    </button>
+  </div>
+</section>
+
+<!-- TELA 4 — CONFIG OBRA -->
+<section id="tela-config" class="tela" aria-hidden="true">
+  <header class="topo">
+    <button id="btn-voltar-config" class="btn-icone" type="button" aria-label="Voltar">←</button>
+    <span>Configurar Obra</span>
+    <span aria-hidden="true"></span>
+  </header>
+  <div class="form">
+    <label for="cfg-nome">Nome da obra</label>
+    <input id="cfg-nome" type="text" placeholder="Ex.: Laje Cond. Jardim Sul" value="Obra Teste" maxlength="80">
+
+    <div class="form-grid-2">
+      <div>
+        <label for="cfg-largura">Largura (cm)</label>
+        <input id="cfg-largura" type="number" value="300" min="100" max="2000" step="10">
+      </div>
+      <div>
+        <label for="cfg-comprimento">Comprimento (cm)</label>
+        <input id="cfg-comprimento" type="number" value="800" min="100" max="10000" step="50">
+      </div>
+    </div>
+
+    <label>Nº de faixas (calculado)</label>
+    <output id="cfg-faixas" class="form-info" aria-live="polite">10 faixas de 30 cm</output>
+
+    <label for="cfg-produto">Produto</label>
+    <select id="cfg-produto">
+      <option>Vedapren Laje — 18L — 3,0 m²/L</option>
+      <option>Sika Sikalastic — 4 kg — 3,5 m²/L</option>
+      <option>Quartzolit Weber — 18L — 3,0 m²/L</option>
+      <option>Otto Baumgart Denvertec 540 — 18L — 4,0 m²/L</option>
+      <option>Vedacit Vedapren — 18L — 2,5 m²/L</option>
+      <option>Bautech Acrílica — 18L — 3,0 m²/L</option>
+      <option>Coral Wandepoxi — 3,6L — 4,0 m²/L</option>
+      <option>Outros</option>
+    </select>
+
+    <label for="cfg-de-valor">Demãos</label>
+    <div class="stepper">
+      <button id="cfg-de-menos" class="btn-stepper" type="button" aria-label="Diminuir demãos">−</button>
+      <span id="cfg-de-valor" aria-live="polite">1</span>
+      <button id="cfg-de-mais" class="btn-stepper" type="button" aria-label="Aumentar demãos">+</button>
+    </div>
+
+    <label for="cfg-queda">Sensor de queda (cm acima do solo)</label>
+    <input id="cfg-queda" type="number" value="25" min="10" max="50">
+
+    <label for="cfg-obst">Sensor de obstáculo (cm)</label>
+    <input id="cfg-obst" type="number" value="30" min="10" max="80">
+
+    <button id="btn-salvar-obra" class="btn btn-primario btn-grande" type="button">
+      💾 Salvar e Ativar
+    </button>
+  </div>
+  <nav class="tab-bar" role="tablist">
+    <button class="tab" data-tab="principal" role="tab" type="button">Início</button>
+    <button class="tab ativo" data-tab="config" role="tab" type="button">Obra</button>
+    <button class="tab" data-tab="log" role="tab" type="button">Eventos</button>
+  </nav>
+</section>
+
+<!-- TELA 5 — LOG / EVENTOS -->
+<section id="tela-log" class="tela" aria-hidden="true">
+  <header class="topo">
+    <button id="btn-voltar-log" class="btn-icone" type="button" aria-label="Voltar">←</button>
+    <span>Eventos da Obra</span>
+    <button id="btn-exportar" class="btn-icone" type="button" title="Exportar log">⤓</button>
+  </header>
+  <div id="lista-eventos" class="lista-eventos" role="log" aria-live="polite"></div>
+  <nav class="tab-bar" role="tablist">
+    <button class="tab" data-tab="principal" role="tab" type="button">Início</button>
+    <button class="tab" data-tab="config" role="tab" type="button">Obra</button>
+    <button class="tab ativo" data-tab="log" role="tab" type="button">Eventos</button>
+  </nav>
+</section>
+
+<!-- MODAL GENÉRICO -->
+<div id="modal" class="modal" role="dialog" aria-modal="true" hidden>
+  <div class="modal-fundo"></div>
+  <div class="modal-conteudo">
+    <h3 id="modal-titulo">Confirmação</h3>
+    <p id="modal-texto">Tem certeza?</p>
+    <div class="modal-botoes">
+      <button class="btn btn-secundario" id="modal-cancelar" type="button">Cancelar</button>
+      <button class="btn btn-primario" id="modal-ok" type="button">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+<!-- Carregamento modular ES6. -->
+<script type="module" src="./js/main.js"></script>
+</body>
+</html>
