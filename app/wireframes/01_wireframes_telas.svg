@@ -1,0 +1,311 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="1800" viewBox="0 0 1280 1800" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="a" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#1F4E79"/>
+    </marker>
+    <style>
+      .t { font-size: 22px; font-weight: 700; fill: #102A43; }
+      .ts { font-size: 14px; font-weight: 700; fill: #1F4E79; text-anchor: middle; }
+      .tl { font-size: 12px; font-weight: 700; fill: #FFFFFF; text-anchor: middle; }
+      .tsem { font-size: 10.5px; font-weight: 700; fill: #FFFFFF; text-anchor: middle; }
+      .bl { font-size: 11px; fill: #486581; }
+      .b { font-size: 11px; font-weight: 700; fill: #1F4E79; }
+      .bpeq { font-size: 10px; fill: #627D98; }
+      .nota { font-size: 12px; font-weight: 700; fill: #C62828; }
+    </style>
+  </defs>
+  <rect width="1280" height="1800" fill="#F5F7FA"/>
+  <text x="640" y="40" text-anchor="middle" class="t">WIREFRAMES DO APP — 6 telas principais (mockup baixa fidelidade)</text>
+  <text x="640" y="62" text-anchor="middle" font-size="14" fill="#627D98">Esboço visual para alinhar UX antes de programar cada tela</text>
+
+  <!-- ============== TELA 1 — CONEXÃO ============== -->
+  <g transform="translate(40,110)">
+    <rect width="270" height="540" rx="24" fill="#1F4E79" stroke="#0D2F4F" stroke-width="2"/>
+    <rect y="0" width="270" height="28" rx="24" fill="#0D2F4F"/>
+    <text x="135" y="20" class="tl" font-size="11" fill="#FFFFFF">9:41 ●●● 5G 🔋</text>
+
+    <text x="135" y="120" text-anchor="middle" class="tl" font-size="22">IMP-BOT</text>
+    <text x="135" y="148" text-anchor="middle" class="tl" font-size="12" opacity="0.7">Conectando ao robô</text>
+
+    <!-- círculo animado -->
+    <circle cx="135" cy="220" r="50" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-dasharray="8,6"/>
+    <text x="135" y="226" text-anchor="middle" class="tl" font-size="14">⌛</text>
+
+    <rect x="20" y="300" width="230" height="40" rx="8" fill="#0D2F4F" stroke="#5B8AB5" stroke-width="1.5"/>
+    <text x="135" y="324" text-anchor="middle" class="tsem" font-size="11">Procurando Wi-Fi do robô...</text>
+
+    <rect x="20" y="360" width="230" height="38" rx="8" fill="#FFFFFF" stroke="#1F4E79" stroke-width="2"/>
+    <text x="135" y="383" text-anchor="middle" class="b" fill="#1F4E79">⟲ Tentar novamente</text>
+
+    <rect x="20" y="410" width="230" height="38" rx="8" fill="none" stroke="#5B8AB5" stroke-width="1.5" stroke-dasharray="6,4"/>
+    <text x="135" y="433" text-anchor="middle" class="tsem" font-size="11" opacity="0.7">Modo simulação</text>
+
+    <text x="135" y="500" text-anchor="middle" class="tl" font-size="10" opacity="0.5">v1.0 · Mac: A4:CF:12:...</text>
+    <text x="135" y="518" text-anchor="middle" class="tl" font-size="10" opacity="0.5">Firmware: 1.0.0</text>
+  </g>
+  <text x="175" y="688" text-anchor="middle" class="ts">1. Conexão</text>
+
+  <!-- ============== TELA 2 — DASHBOARD ============== -->
+  <g transform="translate(380,110)">
+    <rect width="270" height="540" rx="24" fill="#F5F7FA" stroke="#90A4AE" stroke-width="2"/>
+    <rect y="0" width="270" height="28" rx="24" fill="#102A43"/>
+    <text x="135" y="20" text-anchor="middle" class="tl" font-size="11" fill="#FFFFFF">9:41 ●●● 5G 🔋</text>
+
+    <!-- header -->
+    <rect y="28" width="270" height="48" fill="#1F4E79"/>
+    <text x="20" y="58" class="tl" font-size="14" fill="#FFFFFF" text-anchor="start">Obra: Laje Cond. X</text>
+    <text x="250" y="58" class="tl" font-size="14" text-anchor="end" fill="#FFFFFF">⌂</text>
+
+    <!-- cartão STATUS grande -->
+    <rect x="14" y="92" width="242" height="100" rx="10" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2"/>
+    <text x="22" y="116" class="bpeq" fill="#1B5E20">STATUS</text>
+    <text x="22" y="148" font-size="28" font-weight="700" fill="#1B5E20" font-family="Segoe UI">Em operação</text>
+    <circle cx="240" cy="110" r="6" fill="#2E7D32"/>
+    <text x="22" y="170" class="bl" fill="#2E7D32">Faixa 3 de 10</text>
+    <text x="22" y="185" class="bl" fill="#2E7D32">62% concluído</text>
+
+    <!-- cartão m² -->
+    <rect x="14" y="206" width="116" height="76" rx="8" fill="#FFFFFF" stroke="#CFD8DC" stroke-width="1.5"/>
+    <text x="72" y="226" text-anchor="middle" class="bpeq">m² APLICADOS</text>
+    <text x="72" y="262" text-anchor="middle" font-size="22" font-weight="700" fill="#1F4E79">186</text>
+
+    <!-- cartão tempo -->
+    <rect x="140" y="206" width="116" height="76" rx="8" fill="#FFFFFF" stroke="#CFD8DC" stroke-width="1.5"/>
+    <text x="198" y="226" text-anchor="middle" class="bpeq">TEMPO</text>
+    <text x="198" y="262" text-anchor="middle" font-size="22" font-weight="700" fill="#1F4E79">2h14</text>
+
+    <!-- bateria/produto -->
+    <rect x="14" y="294" width="116" height="68" rx="8" fill="#FFFFFF" stroke="#CFD8DC" stroke-width="1.5"/>
+    <text x="72" y="312" text-anchor="middle" class="bpeq">BATERIA</text>
+    <rect x="32" y="320" width="80" height="14" rx="3" fill="#E0E0E0"/>
+    <rect x="32" y="320" width="62" height="14" rx="3" fill="#43A047"/>
+    <text x="72" y="350" text-anchor="middle" class="bl">78% · 4h</text>
+
+    <rect x="140" y="294" width="116" height="68" rx="8" fill="#FFFFFF" stroke="#CFD8DC" stroke-width="1.5"/>
+    <text x="198" y="312" text-anchor="middle" class="bpeq">PRODUTO</text>
+    <rect x="158" y="320" width="80" height="14" rx="3" fill="#E0E0E0"/>
+    <rect x="158" y="320" width="22" height="14" rx="3" fill="#F9A825"/>
+    <text x="198" y="350" text-anchor="middle" class="bl">28%</text>
+
+    <!-- alertas -->
+    <rect x="14" y="375" width="242" height="50" rx="8" fill="#FFF3E0" stroke="#F9A825" stroke-width="1.5"/>
+    <text x="22" y="396" class="bpeq" fill="#E65100">⚠️ ALERTA</text>
+    <text x="22" y="416" class="bl" fill="#3E2723">Bateria baixa em 6 min</text>
+
+    <!-- 3 botões grandes -->
+    <rect x="14" y="438" width="74" height="78" rx="10" fill="#2E7D32"/>
+    <text x="51" y="478" text-anchor="middle" class="tl" font-size="22">▶</text>
+    <text x="51" y="500" text-anchor="middle" class="tsem">Iniciar</text>
+
+    <rect x="98" y="438" width="74" height="78" rx="10" fill="#F9A825"/>
+    <text x="135" y="478" text-anchor="middle" class="tl" font-size="22">⏸</text>
+    <text x="135" y="500" text-anchor="middle" class="tsem">Pausar</text>
+
+    <rect x="180" y="438" width="74" height="78" rx="10" fill="#C62828"/>
+    <text x="217" y="478" text-anchor="middle" class="tl" font-size="22">⏹</text>
+    <text x="217" y="500" text-anchor="middle" class="tsem">Parar</text>
+  </g>
+  <text x="515" y="688" text-anchor="middle" class="ts">2. Dashboard / Operação</text>
+
+  <!-- ============== TELA 3 — EMERGÊNCIA ============== -->
+  <g transform="translate(720,110)">
+    <rect width="270" height="540" rx="24" fill="#F5F7FA" stroke="#90A4AE" stroke-width="2"/>
+    <rect y="0" width="270" height="28" rx="24" fill="#102A43"/>
+    <text x="135" y="20" text-anchor="middle" class="tl" font-size="11" fill="#FFFFFF">9:41 ●●● 5G 🔋</text>
+
+    <!-- tela inteira vermelha -->
+    <rect y="28" width="270" height="512" fill="#C62828"/>
+    <text x="135" y="100" text-anchor="middle" font-size="48" fill="#FFFFFF">🛑</text>
+    <text x="135" y="160" text-anchor="middle" font-size="22" font-weight="700" fill="#FFFFFF">EMERGÊNCIA</text>
+    <text x="135" y="190" text-anchor="middle" font-size="14" fill="#FFCDD2">Robô parado por segurança</text>
+
+    <rect x="20" y="220" width="230" height="100" rx="8" fill="#8E0000"/>
+    <text x="135" y="244" text-anchor="middle" font-size="11" fill="#FFCDD2">CAUSA PROVÁVEL:</text>
+    <text x="135" y="270" text-anchor="middle" font-size="14" font-weight="700" fill="#FFFFFF">Queda detectada</text>
+    <text x="135" y="295" text-anchor="middle" font-size="11" fill="#FFCDD2">Ultrassom solo: 38 cm</text>
+    <text x="135" y="312" text-anchor="middle" font-size="11" fill="#FFCDD2">(limite: 25 cm)</text>
+
+    <text x="135" y="360" text-anchor="middle" font-size="12" fill="#FFCDD2">⚠️ Vá ao robô, verifique</text>
+    <text x="135" y="378" text-anchor="middle" font-size="12" fill="#FFCDD2">se a área é segura antes</text>
+    <text x="135" y="396" text-anchor="middle" font-size="12" fill="#FFCDD2">de retomar.</text>
+
+    <rect x="20" y="430" width="230" height="60" rx="10" fill="#FFFFFF"/>
+    <text x="135" y="460" text-anchor="middle" font-size="14" font-weight="700" fill="#C62828">Desbloquear e Retomar</text>
+    <text x="135" y="480" text-anchor="middle" font-size="11" fill="#C62828">segure por 3 segundos</text>
+  </g>
+  <text x="855" y="688" text-anchor="middle" class="ts">3. Emergência</text>
+
+  <!-- ============== TELA 4 — SETUP DA OBRA ============== -->
+  <g transform="translate(1060,110)">
+    <rect width="270" height="540" rx="24" fill="#F5F7FA" stroke="#90A4AE" stroke-width="2"/>
+    <rect y="0" width="270" height="28" rx="24" fill="#102A43"/>
+    <text x="135" y="20" text-anchor="middle" class="tl" font-size="11" fill="#FFFFFF">9:41 ●●● 5G 🔋</text>
+
+    <rect y="28" width="270" height="48" fill="#1F4E79"/>
+    <text x="20" y="58" class="tl" font-size="14" fill="#FFFFFF" text-anchor="start">Configurar Obra ←</text>
+
+    <text x="20" y="100" class="bpeq">NOME DA OBRA</text>
+    <rect x="20" y="110" width="230" height="38" rx="6" fill="#FFFFFF" stroke="#90A4AE"/>
+    <text x="30" y="134" class="bl">Laje Cond. Jardim Sul</text>
+
+    <text x="20" y="170" class="bpeq">LARGURA DA LAJE (cm)</text>
+    <rect x="20" y="180" width="110" height="40" rx="6" fill="#FFFFFF" stroke="#90A4AE"/>
+    <text x="30" y="206" font-size="18" font-weight="700" fill="#1F4E79">300</text>
+
+    <text x="140" y="170" class="bpeq">COMPRIMENTO (cm)</text>
+    <rect x="140" y="180" width="110" height="40" rx="6" fill="#FFFFFF" stroke="#90A4AE"/>
+    <text x="150" y="206" font-size="18" font-weight="700" fill="#1F4E79">800</text>
+
+    <text x="20" y="244" class="bpeq">Nº DE FAIXAS (calculado)</text>
+    <rect x="20" y="254" width="230" height="40" rx="6" fill="#ECEFF1" stroke="#90A4AE"/>
+    <text x="30" y="280" font-size="18" font-weight="700" fill="#1B5E20">10 faixas de 30 cm</text>
+
+    <text x="20" y="320" class="bpeq">Nº DE DEMÃOS</text>
+    <rect x="20" y="330" width="50" height="40" rx="6" fill="#FFFFFF" stroke="#1F4E79"/>
+    <text x="45" y="358" text-anchor="middle" font-size="18" font-weight="700" fill="#1F4E79">-</text>
+    <rect x="80" y="330" width="60" height="40" rx="6" fill="#FFFFFF" stroke="#90A4AE"/>
+    <text x="110" y="358" text-anchor="middle" font-size="18" font-weight="700" fill="#1B5E20">2</text>
+    <rect x="150" y="330" width="50" height="40" rx="6" fill="#FFFFFF" stroke="#1F4E79"/>
+    <text x="175" y="358" text-anchor="middle" font-size="18" font-weight="700" fill="#1F4E79">+</text>
+
+    <text x="20" y="400" class="bpeq">PRODUTO (escolha do catálogo)</text>
+    <rect x="20" y="410" width="230" height="44" rx="6" fill="#FFFFFF" stroke="#1F4E79"/>
+    <text x="30" y="436" class="bl" fill="#1F4E79">Vedapren Laje — 18L — 3,0 m²/L</text>
+
+    <!-- botão grande -->
+    <rect x="20" y="476" width="230" height="48" rx="10" fill="#2E7D32"/>
+    <text x="135" y="506" text-anchor="middle" font-size="14" font-weight="700" fill="#FFFFFF">Salvar e Ativar</text>
+  </g>
+  <text x="1195" y="688" text-anchor="middle" class="ts">4. Setup da Obra</text>
+
+  <!-- ============== TELA 5 — MAPA AO VIVO ============== -->
+  <g transform="translate(40,720)">
+    <rect width="540" height="540" rx="14" fill="#F5F7FA" stroke="#90A4AE" stroke-width="2"/>
+    <rect y="0" width="540" height="40" fill="#1F4E79" rx="14"/>
+    <rect y="20" width="540" height="20" fill="#1F4E79"/>
+    <text x="20" y="26" class="tl" font-size="14" fill="#FFFFFF" text-anchor="start">Mapa de Cobertura — ao vivo</text>
+    <text x="520" y="26" class="tl" font-size="14" fill="#FFFFFF" text-anchor="end">⚙</text>
+
+    <!-- grid da laje -->
+    <rect x="60" y="80" width="380" height="380" fill="#ECEFF1" stroke="#90A4AE" stroke-width="2"/>
+    <!-- faixas já aplicadas -->
+    <rect x="60" y="80" width="380" height="90" fill="#66BB6A" opacity="0.6"/>
+    <rect x="60" y="190" width="380" height="90" fill="#66BB6A" opacity="0.6"/>
+    <rect x="60" y="300" width="180" height="90" fill="#66BB6A" opacity="0.6"/>
+
+    <!-- robô -->
+    <g transform="translate(280,330)">
+      <rect x="-22" y="-15" width="44" height="30" rx="5" fill="#1F4E79" stroke="#0D2F4F" stroke-width="2"/>
+      <circle cx="-14" cy="18" r="6" fill="#37474F"/>
+      <circle cx="14" cy="18" r="6" fill="#37474F"/>
+      <!-- sensor solto -->
+      <line x1="22" y1="-10" x2="22" y2="18" stroke="#C62828" stroke-width="3" stroke-dasharray="6,4" marker-end="url(#a)"/>
+    </g>
+    <text x="280" y="380" text-anchor="middle" font-size="11" font-weight="700" fill="#FFFFFF">ROBÔ</text>
+
+    <!-- trajeto planejado -->
+    <path d="M80,100 L420,100 M420,100 L420,200 L80,200 M80,200 L80,310 L420,310"
+          fill="none" stroke="#1565C0" stroke-width="2" stroke-dasharray="6,4"/>
+
+    <!-- legenda -->
+    <rect x="60" y="490" width="180" height="30" rx="4" fill="#E8F5E9" stroke="#2E7D32"/>
+    <rect x="70" y="498" width="16" height="14" fill="#2E7D32"/>
+    <text x="92" y="510" font-size="11" fill="#1B5E20">aplicado</text>
+
+    <rect x="250" y="490" width="180" height="30" rx="4" fill="#FFFFFF" stroke="#90A4AE"/>
+    <text x="262" y="510" font-size="11">pendente</text>
+  </g>
+  <text x="310" y="1300" text-anchor="middle" class="ts">5. Mapa / Visualização ao Vivo</text>
+
+  <!-- ============== TELA 6 — HISTÓRICO & LOG ============== -->
+  <g transform="translate(620,720)">
+    <rect width="610" height="540" rx="14" fill="#F5F7FA" stroke="#90A4AE" stroke-width="2"/>
+    <rect y="0" width="610" height="40" fill="#1F4E79" rx="14"/>
+    <rect y="20" width="610" height="20" fill="#1F4E79"/>
+    <text x="20" y="26" class="tl" font-size="14" fill="#FFFFFF" text-anchor="start">Eventos da Obra (logs + telemetria)</text>
+    <text x="590" y="26" class="tl" font-size="14" fill="#FFFFFF" text-anchor="end">⤓</text>
+
+    <rect x="20" y="60" width="570" height="44" rx="6" fill="#E3F2FD" stroke="#1565C0"/>
+    <text x="30" y="78" font-size="11" font-weight="700" fill="#0D2F4F">✅ 14:32  Obra iniciada — 1ª demão — 10 faixas planejadas</text>
+    <text x="30" y="96" font-size="10" fill="#486581">Enviado por operador</text>
+
+    <rect x="20" y="114" width="570" height="44" rx="6" fill="#FFFFFF" stroke="#CFD8DC"/>
+    <text x="30" y="132" font-size="11" fill="#1B5E20">✓ 14:33 — Faixa 1 concluída</text>
+    <text x="30" y="150" font-size="10" fill="#627D98">Tempo: 8 min — m²: 24</text>
+
+    <rect x="20" y="168" width="570" height="44" rx="6" fill="#FFF3E0" stroke="#F9A825"/>
+    <text x="30" y="186" font-size="11" font-weight="700" fill="#E65100">⚠️ 14:41 — Bateria em 30%</text>
+    <text x="30" y="204" font-size="10" fill="#8D6E63">Estimativa: 2h restantes</text>
+
+    <rect x="20" y="222" width="570" height="44" rx="6" fill="#FFFFFF" stroke="#CFD8DC"/>
+    <text x="30" y="240" font-size="11" fill="#1B5E20">✓ 14:48 — Faixa 2 concluída</text>
+    <text x="30" y="258" font-size="10" fill="#627D98">Tempo: 9 min — m²: 24</text>
+
+    <rect x="20" y="276" width="570" height="44" rx="6" fill="#FFEBEE" stroke="#C62828"/>
+    <text x="30" y="294" font-size="11" font-weight="700" fill="#C62828">🛑 14:52 — Obstáculo detectado</text>
+    <text x="30" y="312" font-size="10" fill="#B71C1C">Sensor frente: 18 cm — limite 30 cm — operação pausada automaticamente</text>
+
+    <rect x="20" y="330" width="570" height="44" rx="6" fill="#FFFFFF" stroke="#CFD8DC"/>
+    <text x="30" y="348" font-size="11" fill="#1F4E79">▶ 14:55 — Operação retomada pelo operador</text>
+    <text x="30" y="366" font-size="10" fill="#627D98">Obstáculo removido (balde)</text>
+
+    <rect x="20" y="384" width="570" height="44" rx="6" fill="#E3F2FD" stroke="#1565C0"/>
+    <text x="30" y="402" font-size="11" font-weight="700" fill="#0D2F4F">ℹ️ 15:02 — Faixa 3 concluída — 25% do total</text>
+    <text x="30" y="420" font-size="10" fill="#486581">Faltam 7 faixas · tempo estimado 1h</text>
+
+    <rect x="20" y="450" width="280" height="42" rx="6" fill="#FFFFFF" stroke="#1F4E79"/>
+    <text x="160" y="475" text-anchor="middle" font-size="12" font-weight="700" fill="#1F4E79">⤓ Exportar log (PDF)</text>
+
+    <rect x="310" y="450" width="280" height="42" rx="6" fill="#FFFFFF" stroke="#1F4E79"/>
+    <text x="450" y="475" text-anchor="middle" font-size="12" font-weight="700" fill="#1F4E79">📊 Ver métricas</text>
+
+    <text x="305" y="518" text-anchor="middle" font-size="10" fill="#627D98">8 eventos · 1 alerta · 1 parada automática · 0 emergências</text>
+  </g>
+  <text x="925" y="1300" text-anchor="middle" class="ts">6. Histórico / Logs / Telemetria</text>
+
+  <!-- ============== SETA "FLUXO ENTRE TELAS" ============== -->
+  <line x1="320" y1="1130" x2="595" y2="1130" stroke="#1F4E79" stroke-width="2" marker-end="url(#a)"/>
+  <text x="455" y="1120" text-anchor="middle" class="bpeq">tap no alerta abre log</text>
+
+  <!-- ============== LINHA DE NOTAS ============== -->
+  <rect x="40" y="1350" width="1200" height="420" rx="10" fill="#FFFFFF" stroke="#CFD8DC" stroke-width="1.5"/>
+
+  <text x="60" y="1380" class="b" fill="#1F4E79" font-size="16">PRINCÍPIOS DE UX QUE GOVERNAM TODAS AS 6 TELAS</text>
+
+  <text x="60" y="1410" class="nota">1.</text>
+  <text x="90" y="1410" class="bpeq">Botão PARAR deve estar SEMPRE visível em todas as telas durante operação. Nunca escondido atrás de menu.</text>
+
+  <text x="60" y="1438" class="nota">2.</text>
+  <text x="90" y="1438" class="bpeq">Estados têm cor semântica universal: verde=ok, amarelo=alerta, vermelho=parar/emergência, azul=informação.</text>
+
+  <text x="60" y="1466" class="nota">3.</text>
+  <text x="90" y="1466" class="bpeq">Cada botão grande tem ≥ 60 px de altura para toque confortável com luva (uso típico em obra).</text>
+
+  <text x="60" y="1494" class="nota">4.</text>
+  <text x="90" y="1494" class="bpeq">Texto mínimo de 16 px; nada abaixo disso (legibilidade sob sol).</text>
+
+  <text x="60" y="1522" class="nota">5.</text>
+  <text x="90" y="1522" class="bpeq">Telas de configuração (4) só acessíveis quando robô está PARADO. Operador não pode mudar configuração durante operação.</text>
+
+  <text x="60" y="1550" class="nota">6.</text>
+  <text x="90" y="1550" class="bpeq">App funciona 100% offline (AP direto). Não depende de internet para operar.</text>
+
+  <text x="60" y="1578" class="nota">7.</text>
+  <text x="90" y="1578" class="bpeq">Tela de emergência (3) tem fundo vermelho ocupando tela inteira — nenhum distrair.</text>
+
+  <text x="60" y="1606" class="nota">8.</text>
+  <text x="90" y="1606" class="bpeq">Confirmações exigem segurar botão por 2-3s em ações destrutivas (reset, abortar obra).</text>
+
+  <text x="60" y="1634" class="nota">9.</text>
+  <text x="90" y="1634" class="bpeq">Modo simulação (acesso sem hardware) para treinamento e demonstração comercial.</text>
+
+  <text x="60" y="1662" class="nota">10.</text>
+  <text x="90" y="1662" class="bpeq">Logs (tela 6) exportáveis em PDF para incluir como anexo ao relatório da obra entregue ao cliente.</text>
+
+  <text x="60" y="1700" class="b">CUSTO ESTIMADO DO DESENVOLVIMENTO (versão MVP — primeiro entregável funcional):</text>
+
+  <text x="90" y="1722" class="bpeq">• Versão só com telas 1, 2 e 3 (conexão + dashboard + emergência): R$ 6.000 a R$ 12.000 (dev freelancer, 30-45 dias)</text>
+  <text x="90" y="1744" class="bpeq">• Versão completa (6 telas + simulação + export PDF): R$ 18.000 a R$ 35.000 (dev freelancer sênior, 60-90 dias)</text>
+
+  <text x="640" y="1782" text-anchor="middle" font-size="11" fill="#627D98">Próximo entregável: PWA funcional com 4 telas operacionais (este documento é o "gabarito visual")</text>
+</svg>
