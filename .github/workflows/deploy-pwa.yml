@@ -1,0 +1,44 @@
+name: Deploy PWA para GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: 📥 Baixar código
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: 📂 Preparar artefato
+        run: |
+          mkdir -p dist/app
+          cp -r app/* dist/app/
+          cp docs/arquitetura/MVP_APP.md dist/app/README.html
+          echo "<!DOCTYPE html><meta http-equiv=refresh content='0;url=app/index.html'>" > dist/index.html
+
+      - name: 📤 Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+      - name: 🚀 Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
