@@ -2,7 +2,13 @@
 
 Todas as mudanças notáveis do projeto.
 
-## [Unreleased] — 2026-09-16
+## [Unreleased] (em desenvolvimento)
+
+## [1.0.1] — 2026-09-16
+
+Veja o diff de commits para mudanças pontuais.
+
+## [Unreleased] pré-1 — 2026-09-16
 
 ### Adicionado
 - **Arquitetura monorepo** com `app/`, `firmware/`, `docs/`, `tools/`, `.github/`.
