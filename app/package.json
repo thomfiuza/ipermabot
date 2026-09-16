@@ -1,0 +1,27 @@
+{
+  "name": "impbot-app",
+  "version": "1.0.0",
+  "description": "PWA de controle do robô aplicador de impermeabilizante",
+  "type": "module",
+  "private": true,
+  "main": "js/main.js",
+  "scripts": {
+    "test": "node tests/run.mjs",
+    "lint": "node ../tools/scripts/lint-js.mjs",
+    "review": "node ../tools/scripts/review.mjs",
+    "serve": "python3 -m http.server 8765 --bind 0.0.0.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "pwa",
+    "robot",
+    "waterproofing",
+    "construction",
+    "esp32"
+  ],
+  "author": "IMP-BOT Team",
+  "license": "UNLICENSED",
+  "devDependencies": {}
+}
