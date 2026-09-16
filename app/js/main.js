@@ -12,6 +12,7 @@ import { TransporteWebSocket } from './transport.js';
 import { tratarResposta, tratarTelemetria, tratarEvento } from './protocol.js';
 import { simulador } from './simulator.js';
 import { log, logBook } from './log.js';
+import { metricas } from './metrics.js';
 import { ui } from './ui.js';
 import {
   holdToConfirm,
@@ -28,6 +29,7 @@ const { config, estado, salvarConfig } = criarEstado();
 const ws = new TransporteWebSocket();
 
 let cronometroInterval = null;
+let metricsInterval = null;
 
 /* ============================================================
    FUNÇÕES DE CONVENIÊNCIA
@@ -38,9 +40,17 @@ const _cronometroIniciar = () => {
   estado.tempo_inicio = estado.tempo_inicio || Date.now();
   cronometroInterval = setInterval(() => ui.atualizarCronometro(estado), 1000);
   ui.atualizarCronometro(estado);
+
+  // Métricas: amostra a cada 60s
+  if (!metricsInterval) {
+    metricsInterval = setInterval(() => {
+      metricas.adicionarAmostra(estado);
+    }, 60_000);
+  }
 };
 const _cronometroParar = () => {
   if (cronometroInterval) { clearInterval(cronometroInterval); cronometroInterval = null; }
+  if (metricsInterval) { clearInterval(metricsInterval); metricsInterval = null; }
 };
 const _cronometroZerar = () => {
   _cronometroParar();
@@ -209,11 +219,32 @@ const _bindEventos = () => {
       const tab = t.dataset.tab;
       if (tab === 'principal')      ui.mostrarTela('tela-dashboard');
       else if (tab === 'config')    ui.mostrarTela('tela-config');
+      else if (tab === 'metricas') {
+        ui.mostrarTela('tela-metricas');
+        metricas.renderizarTudo(estado, config);
+      }
       else if (tab === 'log')       ui.mostrarTela('tela-log');
       document.querySelectorAll('.tab-bar .tab').forEach(x => x.classList.remove('ativo'));
       t.classList.add('ativo');
     });
   });
+
+  /* TELA 5.5 — MÉTRICAS */
+  const btnVoltarMetricas = document.getElementById('btn-voltar-metricas');
+  if (btnVoltarMetricas) {
+    btnVoltarMetricas.addEventListener('click', () => ui.mostrarTela('tela-dashboard'));
+  }
+  const btnResetMetricas = document.getElementById('btn-reset-metricas');
+  if (btnResetMetricas) {
+    btnResetMetricas.addEventListener('click', () => {
+      if (confirm('Resetar todas as métricas desta obra?')) {
+        metricas.resetar();
+        metricas.renderizarTudo(estado, config);
+        log('info', 'Métricas resetadas');
+        ui.toast('Métricas resetadas', 'ok');
+      }
+    });
+  }
 
   /* TELA 4 — CONFIG */
   document.getElementById('btn-voltar-config').addEventListener('click', () => ui.mostrarTela('tela-dashboard'));

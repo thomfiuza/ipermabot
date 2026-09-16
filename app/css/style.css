@@ -445,6 +445,64 @@ body {
 .toast.tipo-erro { background: var(--vermelho); }
 .toast.tipo-warn { background: var(--amarelo); color: #3E2723; }
 
+/* ============================================
+   ESTILOS DA TELA DE MÉTRICAS
+   ============================================ */
+
+.metricas-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 12px 16px;
+}
+.metricas-grid .card-metrica-grafico:first-child {
+  grid-column: span 2;
+  text-align: center;
+}
+.card-metrica-grafico,
+.card-metrica-kpi {
+  background: var(--branco);
+  border: 1.5px solid var(--cinza-borda);
+  border-radius: 8px;
+  padding: 12px;
+}
+.card-metrica-kpi {
+  text-align: center;
+}
+.card-metrica-grafico svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.kpi-linha {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  gap: 4px;
+  margin: 8px 0 4px;
+}
+.kpi-valor {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--azul-corp);
+  font-variant-numeric: tabular-nums;
+}
+.kpi-unidade {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--texto-claro);
+}
+.kpi-sub {
+  font-size: 11px;
+  color: var(--texto-med);
+}
+.metricas-graficos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 0 16px 16px;
+}
+
 /* ACESSIBILIDADE — texto maior e modo escuro */
 @media (prefers-color-scheme: dark) {
   :root {

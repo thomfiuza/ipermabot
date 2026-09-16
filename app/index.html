@@ -112,6 +112,7 @@
   <nav class="tab-bar" role="tablist">
     <button class="tab ativo" data-tab="principal" role="tab" type="button">Início</button>
     <button class="tab" data-tab="config" role="tab" type="button">Obra</button>
+    <button class="tab" data-tab="metricas" role="tab" type="button">Métricas</button>
     <button class="tab" data-tab="log" role="tab" type="button">Eventos</button>
   </nav>
 </section>
@@ -194,6 +195,87 @@
   <nav class="tab-bar" role="tablist">
     <button class="tab" data-tab="principal" role="tab" type="button">Início</button>
     <button class="tab ativo" data-tab="config" role="tab" type="button">Obra</button>
+    <button class="tab" data-tab="metricas" role="tab" type="button">Métricas</button>
+    <button class="tab" data-tab="log" role="tab" type="button">Eventos</button>
+  </nav>
+</section>
+
+<!-- TELA 5.5 — MÉTRICAS -->
+<section id="tela-metricas" class="tela" aria-hidden="true">
+  <header class="topo">
+    <button id="btn-voltar-metricas" class="btn-icone" type="button" aria-label="Voltar">←</button>
+    <span>Métricas da Obra</span>
+    <button id="btn-reset-metricas" class="btn-icone" type="button" title="Resetar">↻</button>
+  </header>
+
+  <div class="metricas-grid">
+    <!-- Rosca: progresso geral -->
+    <div class="card-metrica-grafico">
+      <span class="lbl-metrica">PROGRESSO</span>
+      <svg id="grafico-progresso" aria-label="Progresso da obra"></svg>
+    </div>
+
+    <!-- KPIs: resumos -->
+    <div class="card-metrica-kpi">
+      <span class="lbl-metrica">ÁREA APLICADA</span>
+      <div class="kpi-linha">
+        <span class="kpi-valor" id="kpi-m2">0.0</span>
+        <span class="kpi-unidade">m²</span>
+      </div>
+      <div class="kpi-sub" id="kpi-m2-sub">de 0 m²</div>
+    </div>
+
+    <div class="card-metrica-kpi">
+      <span class="lbl-metrica">VELOCIDADE</span>
+      <div class="kpi-linha">
+        <span class="kpi-valor" id="kpi-velocidade">0.0</span>
+        <span class="kpi-unidade">m²/min</span>
+      </div>
+      <div class="kpi-sub" id="kpi-velocidade-sub">aguardando…</div>
+    </div>
+
+    <div class="card-metrica-kpi">
+      <span class="lbl-metrica">TEMPO TOTAL</span>
+      <div class="kpi-linha">
+        <span class="kpi-valor" id="kpi-tempo">00:00</span>
+      </div>
+      <div class="kpi-sub" id="kpi-tempo-sub">operação ativa</div>
+    </div>
+
+    <div class="card-metrica-kpi">
+      <span class="lbl-metrica">EFICIÊNCIA</span>
+      <div class="kpi-linha">
+        <span class="kpi-valor" id="kpi-eficiencia">0</span>
+        <span class="kpi-unidade">%</span>
+      </div>
+      <div class="kpi-sub">vs. método manual</div>
+    </div>
+
+    <div class="card-metrica-kpi">
+      <span class="lbl-metrica">FAIXAS CONCLUÍDAS</span>
+      <div class="kpi-linha">
+        <span class="kpi-valor" id="kpi-faixas-feitas">0</span>
+        <span class="kpi-unidade" id="kpi-faixas-total">de 0</span>
+      </div>
+      <div class="kpi-sub" id="kpi-faixas-pct">0% da laje</div>
+    </div>
+  </div>
+
+  <div class="metricas-graficos">
+    <div class="card-metrica-grafico">
+      <svg id="grafico-bateria" aria-label="Bateria ao longo do tempo"></svg>
+    </div>
+    <div class="card-metrica-grafico">
+      <svg id="grafico-produto" aria-label="Produto ao longo do tempo"></svg>
+    </div>
+    <div class="card-metrica-grafico" style="grid-column: span 2">
+      <svg id="grafico-velocidade" aria-label="Velocidade por faixa"></svg>
+    </div>
+  </div>
+
+  <nav class="tab-bar" role="tablist">
+    <button class="tab" data-tab="principal" role="tab" type="button">Início</button>
+    <button class="tab ativo" data-tab="metricas" role="tab" type="button">Métricas</button>
     <button class="tab" data-tab="log" role="tab" type="button">Eventos</button>
   </nav>
 </section>
@@ -209,6 +291,7 @@
   <nav class="tab-bar" role="tablist">
     <button class="tab" data-tab="principal" role="tab" type="button">Início</button>
     <button class="tab" data-tab="config" role="tab" type="button">Obra</button>
+    <button class="tab" data-tab="metricas" role="tab" type="button">Métricas</button>
     <button class="tab ativo" data-tab="log" role="tab" type="button">Eventos</button>
   </nav>
 </section>
