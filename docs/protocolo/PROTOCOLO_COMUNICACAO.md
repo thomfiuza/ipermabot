@@ -115,6 +115,40 @@
 | `produto_vazio` | erro | Galão vazio |
 | `erro_sensor` | erro | Leitura inválida por X segundos |
 | `erro_motor` | erro | Encoder não conta por X segundos (travado) |
+| `tombamento_detectado` | erro | **IMU**: inclinação > 45° mantida por 300ms — parada automática |
+| `inclinacao_alerta` | warn | **IMU**: inclinação > 30° — alerta antes do tombamento |
+| `imu_falha` | warn | BNO055 não respondeu no I2C (sensor ausente/queimado) |
+
+### 4.1. Detecção de Tombamento via IMU (BNO055)
+
+O robô carrega um sensor **Bosch BNO055** (9-DoF + sensor fusion onboard)
+ligado no I2C (SDA=21, SCL=22, addr=0x28). A cada 100 ms o firmware lê
+Euler absoluto (roll, pitch, heading) e dispara:
+
+1. **`inclinacao_alerta`** quando `sqrt(roll² + pitch²) ≥ 30°`
+   - Severidade: `warn`. Apenas notifica, não para.
+2. **`tombamento_detectado`** quando `sqrt(roll² + pitch²) ≥ 45°` **por mais
+   de 300 ms**.
+   - Severidade: `erro`. **Para motores, fecha válvula, seta estado = QUEDA**.
+   - Histerese de 5° para retornar à operação normal.
+3. **`imu_falha`** se o chip não responder no `Wire.endTransmission()` ou
+   se o `CHIP_ID != 0xA0`.
+   - Severidade: `warn`. Robô segue operando sem essa proteção.
+
+**Campos adicionais na telemetria (1 Hz):**
+
+| Campo | Tipo | Descrição |
+|---|---|---|
+| `imu_ok` | bool | IMU inicializado e respondendo |
+| `roll_graus` | float | Rotação em torno do eixo X (frente-trás) |
+| `pitch_graus` | float | Rotação em torno do eixo Y (esquerda-direita) |
+| `tilt_graus` | float | Magnitude do tilt = √(roll² + pitch²) |
+| `heading_graus` | float | Bússola (0..360, ignorado nessa versão) |
+
+> Em caso de `imu_ok=false`, todos os campos de Euler ficam em 0. **A app deve
+> exibir um aviso persistente ao usuário** ("⚠️ Sensor de tombamento inativo")
+> até o próximo reset, para que o operador saiba que a proteção por inclinação
+> não está ativa.
 
 ---
 
@@ -169,6 +203,13 @@ INTERVALO_VALVULA_MS    = 1200
 COMPRIMENTO_FAIXA_CM = 400
 NUMERO_DE_FAIXAS     = 10
 FATOR_COMPENSACAO_MOTOR = 1.000
+
+# IMU (BNO055 sobre I2C — pinos 21/22 a 400 kHz)
+IMU_ENDERECO               = 0x28           # I2C slave address (ADR=GND)
+IMU_INCLINACAO_ALERTA_GRAUS = 30.0           # warn
+IMU_TOMBAMENTO_GRAUS        = 45.0           # erro → PARAR
+IMU_INTERVALO_MS            = 100            # 10 Hz
+IMU_TOMBAMENTO_CONFIRMA_MS  = 300            # janela p/ confirmar
 ```
 
 > Todos esses defaults podem ser sobrescritos via `definir_*`. Os valores

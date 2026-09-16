@@ -245,6 +245,56 @@ _('ignora evento nulo', () => {
 });
 
 /* ============================================================================
+   EVENTOS IMU (BNO055)
+   ============================================================================ */
+
+_('tombamento_detectado aciona hook de emergência e severity erro', () => {
+  const L = _simularLog();
+  let emergType = null;
+  const hooks = { onEmergencia: (t) => { emergType = t; } };
+  tratarEvento({ tipo: 'tombamento_detectado', descricao: 'tilt 48°' }, L.fn, hooks);
+  _eq(L.logs.length, 1);
+  _eq(L.logs[0].tipo, 'erro');
+  _eq(emergType, 'tombamento_detectado');
+});
+
+_('inclinacao_alerta severity warn, NÃO chama emergencia', () => {
+  const L = _simularLog();
+  let emergCalled = false;
+  const hooks = { onEmergencia: () => { emergCalled = true; } };
+  tratarEvento({ tipo: 'inclinacao_alerta', descricao: 'tilt 32°' }, L.fn, hooks);
+  _eq(L.logs.length, 1);
+  _eq(L.logs[0].tipo, 'warn');
+  _eq(emergCalled, false);
+});
+
+_('imu_falha severity warn, sensor ausente', () => {
+  const L = _simularLog();
+  tratarEvento({ tipo: 'imu_falha', descricao: 'CHIP_ID != 0xA0' }, L.fn, {});
+  _eq(L.logs.length, 1);
+  _eq(L.logs[0].tipo, 'warn');
+});
+
+/* ============================================================================
+   TELEMETRIA IMU
+   ============================================================================ */
+
+_('telemetria preenche estado.imu_ok e tilt', () => {
+  const L = _simularLog();
+  const estado = {
+    esp_estado: EST.TRABALHANDO, bateria: 100, produto: 100,
+    faixa: 0, m2_feitos: 0, dist_solo: 12, dist_obst: 200, imu_ok: true, roll: 0, pitch: 0, tilt: 0
+  };
+  const config = { lim_queda_cm: 25, lim_obst_cm: 30 };
+  const hooks = { onQueda: null, onObstaculo: null };
+  tratarTelemetria({ imu_ok: false, roll_graus: 1.5, pitch_graus: -2.3, tilt_graus: 2.7 }, estado, config, hooks);
+  _eq(estado.imu_ok, false);
+  _eq(estado.roll, 1.5);
+  _eq(estado.pitch, -2.3);
+  _eq(estado.tilt, 2.7);
+});
+
+/* ============================================================================
    COBERTURA EXTRA: payload de telemetria parcial
    ============================================================================ */
 console.log('\n  📦 Cobertura parcial (campos opcionais)');

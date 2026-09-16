@@ -30,6 +30,7 @@
  */
 
 #include <Arduino.h>
+#include <Wire.h>
 
 // ============================================================================
 // 1. MAPA DE PINOS — onde cada fio está ligado no ESP32
@@ -68,6 +69,18 @@ const int PIN_BUZZER      = 5;
 const int PIN_BOTAO_START = 13;    // inicia/para o serviço
 const int PIN_BOTAO_ESTOP = 32;    // PARADA DE EMERGÊNCIA
 
+// --- IMU (BNO055 sobre I2C) ---
+// BNO055 já tem sensor fusion onboard — entrega roll/pitch/yaw absolutos
+// sem precisar de filtro de Kalman no microcontrolador. Vantagem grande
+// sobre o MPU6050 puro.
+//
+// Endereço I2C padrão = 0x28. Se o pino ADR for HIGH, vira 0x29.
+// Conexão: SDA→21, SCL→22 (padrão Wire no ESP32 DevKit)
+const int PIN_I2C_SDA = 21;
+const int PIN_I2C_SCL = 22;
+const uint8_t IMU_ENDERECO = 0x28;
+const uint32_t IMU_FREQ_HZ = 400000;  // 400 kHz (rápido)
+
 // ============================================================================
 // 2. PARÂMETROS DE CALIBRAÇÃO — VOCÊ VAI AJUSTAR ESTES NÚMEROS
 // ============================================================================
@@ -97,6 +110,19 @@ long PULSOS_GIRO_90 = 210;
 const float DIST_MIN_OBSTACULO_CM = 30.0;  // para/desvia a esta distância
 const float DIST_SOLO_NORMAL_CM   = 12.0;  // leitura do sensor de solo no piso plano
 const float LIMIAR_QUEDA_CM       = 25.0;  // acima disso = buraco/beirada → parar
+
+// --- IMU / Inclinação ---
+// Ângulo a partir do qual o robô deve parar e alertar tombamento.
+// 45° é o padrão industrial para AGVs pequenos — 30° é super sensível,
+// 60° é muito tolerante. Ajuste conforme o seu robô.
+const float IMU_INCLINACAO_ALERTA_GRAUS = 30.0;
+const float IMU_TOMBAMENTO_GRAUS        = 45.0;
+
+// Intervalo de leitura: 100 ms (10 Hz) — mais que suficiente para estabilidade.
+const unsigned long IMU_INTERVALO_MS = 100;
+
+// Janela em ms para confirmar tombamento (evitar falso positivo durante rampa)
+const unsigned long IMU_TOMBAMENTO_CONFIRMA_MS = 300;
 
 // --- Aplicação do produto ---
 // A válvula abre por X milissegundos a cada Y milissegundos.
@@ -155,6 +181,161 @@ bool valvulaAberta = false;
 // Controle do pisca do LED
 unsigned long ultimoPisca = 0;
 bool ledAceso = false;
+
+// --- IMU ---
+bool imuInicializado = false;        // sucesso ao acordar o BNO055
+float imuRollGraus = 0.0;            // rotação em torno do eixo X (frente-trás)
+float imuPitchGraus = 0.0;           // rotação em torno do eixo Y (esquerda-direita)
+float imuHeadingGraus = 0.0;         // bússola (0..360)
+unsigned long ultimaLeituraIMU = 0;
+unsigned long tombamentoDesde = 0;   // timestamp em que o tilt excedeu o limite
+bool alertaTombamentoAtivo = false;
+
+// Registradores BNO055 (apenas os essenciais para a nossa aplicação)
+// Fonte: datasheet BNO055 Rev 1.4 §4.2
+#define BNO055_REG_CHIP_ID      0x00
+#define BNO055_REG_OPR_MODE     0x3D
+#define BNO055_REG_EULER_LSB    0x1A  // heading LSB
+// Modos
+#define BNO055_MODE_CONFIG      0x00
+#define BNO055_MODE_NDOF        0x0C  // 9-DoF fusion + compass
+// Chip ID esperado
+#define BNO055_CHIP_ID_VALUE    0xA0
+
+// Flag que indica que o IMU detectou tombamento nesta iteração.
+// O loop() lê essa flag, transforma em evento e toma ação de parada.
+bool imuTombamentoDetectadoAgora = false;
+bool imuInclinacaoAlertaAgora = false;
+
+// ============================================================================
+// 3.5. FUNÇÕES DO IMU (BNO055) — Detecção de inclinação e tombamento
+// ============================================================================
+// O BNO055 já tem fusão sensorial onboard (giro+acel+compass), entregando
+// Euler absoluto em graus. Não precisamos rodar filtro no ESP32.
+//
+// Em caso de falha de inicialização (chip não responde, chip ID errado), o
+// programa continua rodando normalmente — apenas sem a proteção do IMU.
+// Isso é importante em campo: o operador é avisado, mas o robô segue
+// funcionando com a proteção dos ultrassônicos (queda + obstáculo).
+
+// Lê 1 byte do registrador do BNO055 via I2C.
+// Retorna 0xFF em caso de erro.
+uint8_t imuLerRegistrador(uint8_t reg) {
+  Wire.beginTransmission(IMU_ENDERECO);
+  Wire.write(reg);
+  if (Wire.endTransmission(false) != 0) return 0xFF;
+  Wire.requestFrom((int)IMU_ENDERECO, 1);
+  if (Wire.available() < 1) return 0xFF;
+  return Wire.read();
+}
+
+// Escreve 1 byte em um registrador do BNO055 via I2C.
+bool imuEscreverRegistrador(uint8_t reg, uint8_t valor) {
+  Wire.beginTransmission(IMU_ENDERECO);
+  Wire.write(reg);
+  Wire.write(valor);
+  return Wire.endTransmission() == 0;
+}
+
+// Lê 6 bytes do bloco "Euler" (heading LSB/MSB, roll LSB/MSB, pitch LSB/MSB).
+// Cada componente é int16 little-endian, escala = 1/16 grau.
+bool imuLerEuler(int16_t* heading, int16_t* roll, int16_t* pitch) {
+  Wire.beginTransmission(IMU_ENDERECO);
+  Wire.write(BNO055_REG_EULER_LSB);
+  if (Wire.endTransmission(false) != 0) return false;
+  Wire.requestFrom((int)IMU_ENDERECO, 6);
+  if (Wire.available() < 6) return false;
+  uint8_t buf[6];
+  for (int i = 0; i < 6; i++) buf[i] = Wire.read();
+  *heading = (int16_t)((uint16_t)buf[1] << 8 | buf[0]);
+  *roll    = (int16_t)((uint16_t)buf[3] << 8 | buf[2]);
+  *pitch   = (int16_t)((uint16_t)buf[5] << 8 | buf[4]);
+  return true;
+}
+
+// Inicializa o BNO055. Retorna true em sucesso.
+// Troca para modo CONFIG, valida CHIP_ID, entra em NDOF (9-DoF fusion).
+bool imuIniciar() {
+  Wire.begin(PIN_I2C_SDA, PIN_I2C_SCL, IMU_FREQ_HZ);
+  Wire.beginTransmission(IMU_ENDERECO);
+  if (Wire.endTransmission() != 0) {
+    Serial.println("[IMU] Falha ao selecionar escravo 0x28 no barramento I2C");
+    return false;
+  }
+  uint8_t chipId = imuLerRegistrador(BNO055_REG_CHIP_ID);
+  if (chipId != BNO055_CHIP_ID_VALUE) {
+    Serial.printf("[IMU] CHIP_ID=0x%02X (esperado 0xA0). Sensor ausente/falho.\n", chipId);
+    return false;
+  }
+  // Mudar para CONFIG antes de qualquer reconfiguração
+  imuEscreverRegistrador(BNO055_REG_OPR_MODE, BNO055_MODE_CONFIG);
+  delay(25);  // tempo de acomodação obrigatório (datasheet)
+  // Entrar em NDOF — fusão total + bússola calibrada
+  imuEscreverRegistrador(BNO055_REG_OPR_MODE, BNO055_MODE_NDOF);
+  delay(50);  // estabilização do filtro de fusão
+  Serial.println("[IMU] Inicializado em modo NDOF (9-DoF + compass)");
+  return true;
+}
+
+// Lê a inclinação atual. Idempotente: respeita IMU_INTERVALO_MS.
+// Em caso de falha, mantém o último valor.
+void imuAtualizar() {
+  unsigned long agora = millis();
+  if (agora - ultimaLeituraIMU < IMU_INTERVALO_MS) return;
+  ultimaLeituraIMU = agora;
+  if (!imuInicializado) return;
+
+  int16_t h, r, p;
+  if (!imuLerEuler(&h, &r, &p)) return;
+  imuHeadingGraus = (float)h / 16.0;
+  imuRollGraus    = (float)r / 16.0;
+  imuPitchGraus   = (float)p / 16.0;
+}
+
+// Calcula a magnitude do tilt em relação ao plano horizontal.
+// Útil para detectar tombamento independente do eixo.
+float imuTiltAbsoluto() {
+  float r = imuRollGraus;
+  float p = imuPitchGraus;
+  if (r < 0) r = -r;
+  if (p < 0) p = -p;
+  // Magnitude Euclidiana normalizada para a faixa do robô (0..90°)
+  return sqrt(r * r + p * p);
+}
+
+// Verifica inclinação excessiva e seta flags de evento se mantido por >300ms.
+// Apenas SINALIZA — não envia evento diretamente. Quem chama deve ler as flags
+// imuTombamentoDetectadoAgora / imuInclinacaoAlertaAgora e chamar enviarEvento
+// para evitar problemas de forward declaration.
+bool imuVerificarTombamento() {
+  if (!imuInicializado) return false;
+  float tilt = imuTiltAbsoluto();
+  unsigned long agora = millis();
+
+  if (tilt >= IMU_TOMBAMENTO_GRAUS) {
+    if (tombamentoDesde == 0) tombamentoDesde = agora;
+    if ((agora - tombamentoDesde) >= IMU_TOMBAMENTO_CONFIRMA_MS) {
+      if (!alertaTombamentoAtivo) {
+        alertaTombamentoAtivo = true;
+        imuTombamentoDetectadoAgora = true;
+        Serial.printf("[IMU] TILT EXCESSIVO: %.1f° (limite %.1f°). PARAR!\n",
+                      tilt, IMU_TOMBAMENTO_GRAUS);
+        return true;
+      }
+    }
+  } else if (tilt < IMU_TOMBAMENTO_GRAUS - 5.0) {  // histerese de 5°
+    tombamentoDesde = 0;
+    alertaTombamentoAtivo = false;
+  }
+
+  // Caso intermediário: ainda trabalhando, mas atenção
+  if (tilt >= IMU_INCLINACAO_ALERTA_GRAUS && !alertaTombamentoAtivo) {
+    imuInclinacaoAlertaAgora = true;
+    Serial.printf("[IMU] ATENCAO: inclinacao %.1f° (alerta %.1f°)\n",
+                  tilt, IMU_INCLINACAO_ALERTA_GRAUS);
+  }
+  return false;
+}
 
 // ============================================================================
 // 4. FUNÇÕES DOS ENCODERS (contagem de voltas)
@@ -523,7 +704,10 @@ enum EventoTipo {
   EVT_PRODUTO_BAIXO,
   EVT_ERRO_SENSOR,
   EVT_ERRO_MOTOR,
-  EVT_WIFI_DESCONECTADO
+  EVT_WIFI_DESCONECTADO,
+  EVT_TOMBAMENTO_DETECTADO,    // IMU detectou tilt > 45°
+  EVT_INCLINACAO_ALERTA,       // IMU alertou tilt > 30°
+  EVT_IMU_FALHA               // chip não respondeu
 };
 
 // Converte EventoTipo → string que o app conhece (snake_case).
@@ -542,6 +726,9 @@ static const char* eventoTipoStr(EventoTipo t) {
     case EVT_ERRO_SENSOR:          return "erro_sensor";
     case EVT_ERRO_MOTOR:           return "erro_motor";
     case EVT_WIFI_DESCONECTADO:    return "wifi_desconectado";
+    case EVT_TOMBAMENTO_DETECTADO: return "tombamento_detectado";
+    case EVT_INCLINACAO_ALERTA:    return "inclinacao_alerta";
+    case EVT_IMU_FALHA:            return "imu_falha";
   }
   return "desconhecido";
 }
@@ -585,6 +772,12 @@ void enviarTelemetria() {
   docEnvio["data"]["produto_pct"]      = lerProdutoPct();
   docEnvio["data"]["distancia_frente"] = (dFrente < 0) ? 999.0 : dFrente;
   docEnvio["data"]["distancia_solo"]   = (dSolo   < 0) ? 999.0 : dSolo;
+  // IMU (BNO055)
+  docEnvio["data"]["imu_ok"]           = imuInicializado;
+  docEnvio["data"]["roll_graus"]       = imuRollGraus;
+  docEnvio["data"]["pitch_graus"]      = imuPitchGraus;
+  docEnvio["data"]["tilt_graus"]       = imuTiltAbsoluto();
+  docEnvio["data"]["heading_graus"]    = imuHeadingGraus;
   String saida;
   serializeJson(docEnvio, saida);
   webSocket.broadcastTXT(saida);
@@ -919,6 +1112,17 @@ void setup() {
     configurarWiFi();
   }
 
+  // --- IMU (BNO055) — sensor de inclinação e tombamento ---
+  imuInicializado = imuIniciar();
+  if (!imuInicializado) {
+    Serial.println("[IMU] SENSOR AUSENTE — continuando SEM proteção de tombamento.");
+    Serial.println("[IMU] Use apenas em ambiente controlado até instalar o BNO055.");
+    enviarEvento(EVT_IMU_FALHA, "BNO055 nao respondeu");
+  } else {
+    Serial.printf("[IMU] Limite alerta: %.1f°, tombamento: %.1f°\n",
+                  IMU_INCLINACAO_ALERTA_GRAUS, IMU_TOMBAMENTO_GRAUS);
+  }
+
   Serial.println("Sistema pronto.");
   Serial.println("Comandos pela serial:");
   Serial.println("  S = iniciar servico");
@@ -941,6 +1145,25 @@ void loop() {
     pararMotores();
     fecharValvula();
     estadoAtual = EMERGENCIA;
+  }
+
+  // --- IMU: ler tilt atual e checar tombamento (10 Hz) ---
+  imuAtualizar();
+  if (imuInicializado) {
+    if (imuVerificarTombamento()) {
+      pararMotores();
+      fecharValvula();
+      estadoAtual = QUEDA;
+    }
+    // Converte flags em eventos (uma vez por loop)
+    if (imuTombamentoDetectadoAgora) {
+      imuTombamentoDetectadoAgora = false;
+      enviarEvento(EVT_TOMBAMENTO_DETECTADO, "tilt excessivo");
+    }
+    if (imuInclinacaoAlertaAgora) {
+      imuInclinacaoAlertaAgora = false;
+      enviarEvento(EVT_INCLINACAO_ALERTA, "inclinacao acentuada");
+    }
   }
 
   // --- Lê comandos que você digita no Monitor Serial ---

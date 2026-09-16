@@ -39,12 +39,17 @@ for (const m of textoMD.matchAll(reComandos)) {
   eventosDocumentadosMD.push(m[1]);
 }
 
-/* 3. Lista de eventos emitidos pelo firmware (EVENTO_*) */
+/* 3. Lista de eventos emitidos pelo firmware (EVT_*) */
 const textoFirmware = readFileSync(FIRM_INO, 'utf8');
 const eventosFirmware = [];
-const reEventosFW = /\bEVENTO_(\w+)\s*=\s*"/g;
+const reEventosFW = /\bEVT_(\w+)\s*=\s*"/g;
 for (const m of textoFirmware.matchAll(reEventosFW)) {
-  eventosFirmware.push(m[1].toLowerCase());
+  eventosFirmware.push(m[1].toLowerCase().replace(/_/g, '_'));
+}
+// Padrão adicional: case EVT_X: return "snake_case_str";
+const reEventosSwitch = /case EVT_(\w+):\s*return "(\w+)"/g;
+for (const m of textoFirmware.matchAll(reEventosSwitch)) {
+  eventosFirmware.push(m[2]);
 }
 
 /* 4. Cruzamento */
