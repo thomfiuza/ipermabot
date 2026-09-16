@@ -32,6 +32,12 @@
 #include <Arduino.h>
 #include <Wire.h>
 
+// Versão do firmware (atualizada automaticamente por tools/scripts/release.mjs)
+// 1.0.0 = 0x010000, 1.0.1 = 0x010001, etc. (XX.YY.ZZ em hexadecimal).
+#define FW_VERSAO      "1.0.1 (0x010001)"
+#define FW_VERSAO_HEX  0x010001
+#define FW_NOME        "IMP-BOT"
+
 // ============================================================================
 // 1. MAPA DE PINOS — onde cada fio está ligado no ESP32
 // ============================================================================
