@@ -118,6 +118,7 @@
 | `tombamento_detectado` | erro | **IMU**: inclinação > 45° mantida por 300ms — parada automática |
 | `inclinacao_alerta` | warn | **IMU**: inclinação > 30° — alerta antes do tombamento |
 | `imu_falha` | warn | BNO055 não respondeu no I2C (sensor ausente/queimado) |
+| `vibracao_excessiva` | erro | **IMU**: RMS de magnitude de aceleração > 2.5 m/s² mantida por 300ms — indica problema mecânico (motor, rolamento) |
 
 ### 4.1. Detecção de Tombamento via IMU (BNO055)
 
@@ -144,11 +145,32 @@ Euler absoluto (roll, pitch, heading) e dispara:
 | `pitch_graus` | float | Rotação em torno do eixo Y (esquerda-direita) |
 | `tilt_graus` | float | Magnitude do tilt = √(roll² + pitch²) |
 | `heading_graus` | float | Bússola (0..360, ignorado nessa versão) |
+| `vibracao_rms` | float | **Diferencial #10**: dispersão RMS da magnitude de aceleração em m/s² |
 
 > Em caso de `imu_ok=false`, todos os campos de Euler ficam em 0. **A app deve
 > exibir um aviso persistente ao usuário** ("⚠️ Sensor de tombamento inativo")
 > até o próximo reset, para que o operador saiba que a proteção por inclinação
 > não está ativa.
+
+### 4.2. Detecção de Vibração Mecânica
+
+O IMU mede também a **magnitude de aceleração** (`|a| = √(ax² + ay² + az²)`).
+Em repouso, `|a| ≈ 9.81 m/s²` (gravidade). Vibração mecânica — parafusos
+soltos, rolamento gasto, motor desbalanceado — faz `|a|` oscilar ao redor
+de `g`. O firmware computa o **RMS da dispersão** em janela de 32 amostras
+(≈3,2 s @ 10 Hz):
+
+```
+RMS = sqrt(mean((|a_i| - g)²))
+```
+
+- **< 1.2 m/s² RMS** → operação normal
+- **1.2–2.5 m/s² RMS** → `Serial` warning (logger-only, não trava)
+- **> 2.5 m/s² RMS por 300 ms** → evento `vibracao_excessiva` + `pararMotores()` +
+  estado = OBSTACULO (proteção mecânica)
+
+Quando o robô arranca ou cruza uma junta de dilatação, o limite de 300ms
+filtra o transitório, evitando alarmes falsos.
 
 ---
 
@@ -210,6 +232,12 @@ IMU_INCLINACAO_ALERTA_GRAUS = 30.0           # warn
 IMU_TOMBAMENTO_GRAUS        = 45.0           # erro → PARAR
 IMU_INTERVALO_MS            = 100            # 10 Hz
 IMU_TOMBAMENTO_CONFIRMA_MS  = 300            # janela p/ confirmar
+
+# Vibração mecânica (Diferencial #10)
+VIBRACAO_BUFFER_N            = 32            # ~3.2s @ 10 Hz
+VIBRACAO_GRAVIDADE_MS        = 9.80665       # m/s²
+VIBRACAO_LIMIAR_WARN         = 1.2           # m/s² RMS (warn)
+VIBRACAO_LIMIAR_ERRO         = 2.5           # m/s² RMS (stop)
 ```
 
 > Todos esses defaults podem ser sobrescritos via `definir_*`. Os valores

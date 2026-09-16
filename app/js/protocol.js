@@ -29,7 +29,8 @@ const MAPA_EVENTOS = Object.freeze({
   // IMU (BNO055)
   tombamento_detectado:{ tipo: 'erro',    titulo: 'TOMBAMENTO detectado', emergencia: true },
   inclinacao_alerta:   { tipo: 'warn',    titulo: 'Inclinação acentuada' },
-  imu_falha:           { tipo: 'warn',    titulo: 'IMU inativo (sem proteção de tombamento)' }
+  imu_falha:           { tipo: 'warn',    titulo: 'IMU inativo (sem proteção de tombamento)' },
+  vibracao_excessiva:  { tipo: 'erro',    titulo: 'Vibração mecânica excessiva' }
 });
 
 /** Traduz uma resposta a comando (sem `evt`) — mensagem com `id` e `data`. */
@@ -61,6 +62,7 @@ export function tratarTelemetria(d, estado, config, hooks) {
   if (d.roll_graus !== undefined) estado.roll = d.roll_graus;
   if (d.pitch_graus !== undefined) estado.pitch = d.pitch_graus;
   if (d.tilt_graus !== undefined) estado.tilt = d.tilt_graus;
+  if (d.vibracao_rms !== undefined) estado.vibracao_rms = d.vibracao_rms;
 
   if (d.distancia_solo !== undefined) {
     estado.dist_solo = d.distancia_solo;

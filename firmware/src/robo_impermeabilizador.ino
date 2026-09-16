@@ -196,11 +196,28 @@ bool alertaTombamentoAtivo = false;
 #define BNO055_REG_CHIP_ID      0x00
 #define BNO055_REG_OPR_MODE     0x3D
 #define BNO055_REG_EULER_LSB    0x1A  // heading LSB
+#define BNO055_REG_ACCEL_LSB    0x08  // accel X LSB
 // Modos
 #define BNO055_MODE_CONFIG      0x00
 #define BNO055_MODE_NDOF        0x0C  // 9-DoF fusion + compass
 // Chip ID esperado
 #define BNO055_CHIP_ID_VALUE    0xA0
+
+// --- VIBRAÇÃO (Diferencial #10) ---
+// Buffer circular das últimas N magnitudes de aceleração (em m/s²).
+// Vibração = desvio RMS da magnitude absoluta (|a| ≈ 9.81 parado).
+// Acelerômetro do BNO055 reporta em m/s², escala = 1/100 (int16).
+const uint8_t VIBRACAO_BUFFER_N    = 32;       // ~3 segundos a 10 Hz
+const float  VIBRACAO_GRAVIDADE_MS = 9.80665;  // m/s² referência
+const float  VIBRACAO_LIMIAR_WARN  = 1.2;      // m/s² RMS acima de 9,81 → warn
+const float  VIBRACAO_LIMIAR_ERRO  = 2.5;      // m/s² RMS crítico
+
+float vibracaoBuffer[VIBRACAO_BUFFER_N] = {0};
+uint8_t vibracaoBufferIdx = 0;
+uint8_t vibracaoBufferFill = 0;       // quanto do buffer já tem dados
+float vibracaoMagnitudeMs = 0.0;      // magnitude RMS atual
+unsigned long vibracaoDesde = 0;
+bool vibracaoAlertaAtivo = false;
 
 // Flag que indica que o IMU detectou tombamento nesta iteração.
 // O loop() lê essa flag, transforma em evento e toma ação de parada.
@@ -333,6 +350,103 @@ bool imuVerificarTombamento() {
     imuInclinacaoAlertaAgora = true;
     Serial.printf("[IMU] ATENCAO: inclinacao %.1f° (alerta %.1f°)\n",
                   tilt, IMU_INCLINACAO_ALERTA_GRAUS);
+  }
+  return false;
+}
+
+// ============================================================================
+// 3.6. VIBRAÇÃO (Diferencial #10) — Detecção de vibração mecânica excessiva
+// ============================================================================
+// Vibração mecânica pode danificar o produto aplicado (padrão irregular),
+// afrouxar parafusos internos ou indicar problema com motor/rolamento.
+//
+// Método: lê o vetor de aceleração bruta (3 eixos) a 10 Hz, calcula a
+// magnitude absoluta |a| = sqrt(ax² + ay² + az²). Em repouso, |a| ≈ g.
+// A "vibração" é a dispersão RMS de |a| em torno de g.
+//
+// Janela: VIBRACAO_BUFFER_N amostras (32 = ~3.2s a 10 Hz). Suficiente para
+// detectar batidas/transitórios sem confundir com deslocamento lento.
+//
+// Em caso de falha de leitura do IMU, retorna false silenciosamente —
+// a vibração então não é reportada, mas o resto do sistema continua ok.
+
+/**
+ * Lê o vetor de aceleração (int16 little-endian 6 bytes: x, y, z).
+ * Escala: 1 unidade = 1/100 m/s² (ex: 981 = 9.81 m/s²).
+ */
+bool imuLerAccel(int16_t* ax, int16_t* ay, int16_t* az) {
+  Wire.beginTransmission(IMU_ENDERECO);
+  Wire.write(BNO055_REG_ACCEL_LSB);
+  if (Wire.endTransmission(false) != 0) return false;
+  Wire.requestFrom((int)IMU_ENDERECO, 6);
+  if (Wire.available() < 6) return false;
+  uint8_t buf[6];
+  for (int i = 0; i < 6; i++) buf[i] = Wire.read();
+  *ax = (int16_t)((uint16_t)buf[1] << 8 | buf[0]);
+  *ay = (int16_t)((uint16_t)buf[3] << 8 | buf[2]);
+  *az = (int16_t)((uint16_t)buf[5] << 8 | buf[4]);
+  return true;
+}
+
+/**
+ * Insere a magnitude atual no buffer circular.
+ * Retorna magnitude computada (m/s²) ou 0 em caso de erro.
+ */
+float imuRegistrarVibracao() {
+  int16_t ax, ay, az;
+  if (!imuInicializado || !imuLerAccel(&ax, &ay, &az)) return 0.0;
+  // Converte para m/s² (escala do BNO055 é 1/100)
+  float fax = (float)ax / 100.0;
+  float fay = (float)ay / 100.0;
+  float faz = (float)az / 100.0;
+  float mag = sqrtf(fax * fax + fay * fay + faz * faz);
+  vibracaoBuffer[vibracaoBufferIdx] = mag;
+  vibracaoBufferIdx = (vibracaoBufferIdx + 1) % VIBRACAO_BUFFER_N;
+  if (vibracaoBufferFill < VIBRACAO_BUFFER_N) vibracaoBufferFill++;
+  return mag;
+}
+
+/**
+ * Calcula o RMS das magnitudes na janela em torno de g.
+ * RMS = sqrt(mean((|a_i| - g)²)). Quando parado, retorna ~0.
+ */
+float imuVibracaoRms() {
+  if (vibracaoBufferFill < 4) return 0.0;   // precisa de pelo menos 4 amostras
+  float soma = 0.0;
+  for (uint8_t i = 0; i < vibracaoBufferFill; i++) {
+    float diff = vibracaoBuffer[i] - VIBRACAO_GRAVIDADE_MS;
+    soma += diff * diff;
+  }
+  return sqrtf(soma / vibracaoBufferFill);
+}
+
+/**
+ * Verifica vibração excessiva. Retorna true se ESTADO deve mudar para
+ * OBSTACULO ou erro de motor (o que chamar decide).
+ */
+bool imuVerificarVibracao() {
+  if (!imuInicializado) return false;
+  float rms = imuVibracaoRms();
+  vibracaoMagnitudeMs = rms;
+  unsigned long agora = millis();
+
+  if (rms >= VIBRACAO_LIMIAR_ERRO) {
+    if (vibracaoDesde == 0) vibracaoDesde = agora;
+    if ((agora - vibracaoDesde) >= 300) {
+      if (!vibracaoAlertaAtivo) {
+        vibracaoAlertaAtivo = true;
+        Serial.printf("[IMU] VIBRACAO CRITICA: RMS=%.2f m/s² > %.2f\n",
+                      rms, VIBRACAO_LIMIAR_ERRO);
+        return true;   // sinaliza evento critico
+      }
+    }
+  } else if (rms < VIBRACAO_LIMIAR_WARN) {
+    vibracaoDesde = 0;
+    if (vibracaoAlertaAtivo) vibracaoAlertaAtivo = false;
+  } else if (rms >= VIBRACAO_LIMIAR_WARN) {
+    // warn: só notifica sem travar
+    Serial.printf("[IMU] vibracao elevada: RMS=%.2f m/s²\n", rms);
+    return false;
   }
   return false;
 }
@@ -707,7 +821,8 @@ enum EventoTipo {
   EVT_WIFI_DESCONECTADO,
   EVT_TOMBAMENTO_DETECTADO,    // IMU detectou tilt > 45°
   EVT_INCLINACAO_ALERTA,       // IMU alertou tilt > 30°
-  EVT_IMU_FALHA               // chip não respondeu
+  EVT_IMU_FALHA,               // chip não respondeu
+  EVT_VIBRACAO_EXCESSIVA       // IMU detectou vibração mecânica acima do limite
 };
 
 // Converte EventoTipo → string que o app conhece (snake_case).
@@ -729,6 +844,7 @@ static const char* eventoTipoStr(EventoTipo t) {
     case EVT_TOMBAMENTO_DETECTADO: return "tombamento_detectado";
     case EVT_INCLINACAO_ALERTA:    return "inclinacao_alerta";
     case EVT_IMU_FALHA:            return "imu_falha";
+    case EVT_VIBRACAO_EXCESSIVA:   return "vibracao_excessiva";
   }
   return "desconhecido";
 }
@@ -778,6 +894,7 @@ void enviarTelemetria() {
   docEnvio["data"]["pitch_graus"]      = imuPitchGraus;
   docEnvio["data"]["tilt_graus"]       = imuTiltAbsoluto();
   docEnvio["data"]["heading_graus"]    = imuHeadingGraus;
+  docEnvio["data"]["vibracao_rms"]     = vibracaoMagnitudeMs;   // m/s² RMS
   String saida;
   serializeJson(docEnvio, saida);
   webSocket.broadcastTXT(saida);
@@ -1147,13 +1264,22 @@ void loop() {
     estadoAtual = EMERGENCIA;
   }
 
-  // --- IMU: ler tilt atual e checar tombamento (10 Hz) ---
+  // --- IMU: ler tilt atual e checar tombamento + vibração (10 Hz) ---
   imuAtualizar();
   if (imuInicializado) {
     if (imuVerificarTombamento()) {
       pararMotores();
       fecharValvula();
       estadoAtual = QUEDA;
+    }
+    // Vibração: alimentar buffer + checar
+    imuRegistrarVibracao();
+    if (imuVerificarVibracao()) {
+      // vibração crítica: parar motores (proteção mecânica)
+      pararMotores();
+      fecharValvula();
+      estadoAtual = OBSTACULO;  // usa estado existente para sinalizar problema mecânico
+      enviarEvento(EVT_VIBRACAO_EXCESSIVA, "RMS=" + String(vibracaoMagnitudeMs, 2));
     }
     // Converte flags em eventos (uma vez por loop)
     if (imuTombamentoDetectadoAgora) {

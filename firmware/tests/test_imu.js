@@ -154,5 +154,50 @@ _('não usa delay() bloqueante dentro das funções IMU', () => {
   }
 });
 
+/* ============================================================================
+   VIBRAÇÃO (Diferencial #10)
+   ============================================================================ */
+
+_('registrador BNO055_REG_ACCEL_LSB', () => _has('#define BNO055_REG_ACCEL_LSB    0x08'));
+_('função imuLerAccel definida', () => _has('bool imuLerAccel('));
+_('função imuRegistrarVibracao definida', () => _has('float imuRegistrarVibracao()'));
+_('função imuVibracaoRms definida', () => _has('float imuVibracaoRms()'));
+_('função imuVerificarVibracao definida', () => _has('bool imuVerificarVibracao()'));
+
+_('buffer circular VIBRACAO_BUFFER_N = 32', () =>
+  _has_re(/VIBRACAO_BUFFER_N\s*=\s*32/, 'VIBRACAO_BUFFER_N'));
+_('limite warn vibracao 1.2 m/s²', () =>
+  _has_re(/VIBRACAO_LIMIAR_WARN\s*=\s*1\.2/, 'VIBRACAO_LIMIAR_WARN'));
+_('limite erro vibracao 2.5 m/s²', () =>
+  _has_re(/VIBRACAO_LIMIAR_ERRO\s*=\s*2\.5/, 'VIBRACAO_LIMIAR_ERRO'));
+
+_('EVT_VIBRACAO_EXCESSIVA no enum', () =>
+  _has('EVT_VIBRACAO_EXCESSIVA'));
+_('case EVT_VIBRACAO_EXCESSIVA com string snake_case', () =>
+  _has_re(/case EVT_VIBRACAO_EXCESSIVA:\s*return "vibracao_excessiva"/, 'case string'));
+
+_('enviarTelemetria inclui vibracao_rms', () =>
+  _has_re(/docEnvio\["data"\]\["vibracao_rms"\]/, 'vibracao_rms em enviarTelemetria'));
+
+_('loop() chama imuRegistrarVibracao', () => {
+  const loopBody = codigo.match(/void loop\s*\(\s*\)\s*\{([\s\S]*?)^}/m);
+  if (!loopBody) throw new Error('loop() não encontrado');
+  if (!loopBody[1].includes('imuRegistrarVibracao')) {
+    throw new Error('loop não chama imuRegistrarVibracao');
+  }
+});
+
+_('loop() chama imuVerificarVibracao', () => {
+  const loopBody = codigo.match(/void loop\s*\(\s*\)\s*\{([\s\S]*?)^}/m);
+  if (!loopBody) throw new Error('loop() não encontrado');
+  if (!loopBody[1].includes('imuVerificarVibracao')) {
+    throw new Error('loop não chama imuVerificarVibracao');
+  }
+});
+
+_('sqrtf usado para cálculo RMS', () => {
+  _has_re(/sqrtf\s*\(/, 'sqrtf usado');
+});
+
 console.log(`\nResultado: ${pass} ✅ | ${fail} ❌`);
 process.exit(fail === 0 ? 0 : 1);
