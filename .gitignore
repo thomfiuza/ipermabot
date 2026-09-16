@@ -1,0 +1,67 @@
+# ==========================================
+# IMP-BOT — IGNORAR DO VERSIONAMENTO
+# ==========================================
+
+# Dependências
+node_modules/
+
+# Builds / saídas
+dist/
+build/
+*.min.js
+*.min.css
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+
+# Sistema / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Ambientes
+.env
+.env.local
+.env.*.local
+secrets/
+
+# Arduino / ESP32
+*.hex
+*.elf
+*.bin
+*.tmp
+build_sketch/
+arduino_cache/
+
+# Python (caso use)
+__pycache__/
+*.pyc
+*.pyo
+
+# Pasta legacy (mantida para referência mas não versionada)
+legacy/
+
+# Pasta assets pessoal
+assets/raw/
+
+# Manuais antigos (mantidos para referência, podem ser ignorados)
+01_Relatorio_Proposta/
+02_Prototipo_Pratico/
+03_Plano_Negocios/
+04_Diagramas/
+
+# Tools instalados
+.vs/
+05_Dossie_Viabilidade/
+01_Relatorio_Proposta/
+02_Prototipo_Pratico/
+03_Plano_Negocios/
+04_Diagramas/
+assets/
