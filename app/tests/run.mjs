@@ -23,7 +23,7 @@ for (const arq of arquivos) {
   const caminho = join(dirTestes, arq);
   try {
     const saida = execSync(`node "${caminho}"`, {
-      cwd: dirRaiz,
+      cwd: dirname(caminho),     // roda no próprio diretório tests/
       stdio: 'pipe',
       env: { ...process.env, NODE_OPTIONS: '--no-warnings' }
     });
