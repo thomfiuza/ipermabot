@@ -273,6 +273,19 @@
     </div>
   </div>
 
+  <div class="metricas-planta">
+    <div class="card-metrica-grafico" style="grid-column: span 2">
+      <span class="lbl-metrica">PLANTA DA OBRA — tempo real</span>
+      <svg id="grafico-planta" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet"
+           aria-label="Planta da laje com faixas"></svg>
+      <p class="planta-legenda">
+        <span class="lg-cor lg-cor-feita"></span> concluída
+        <span class="lg-cor lg-cor-atual"></span> em execução
+        <span class="lg-cor lg-cor-rest"></span> restante
+      </p>
+    </div>
+  </div>
+
   <nav class="tab-bar" role="tablist">
     <button class="tab" data-tab="principal" role="tab" type="button">Início</button>
     <button class="tab ativo" data-tab="metricas" role="tab" type="button">Métricas</button>
@@ -285,9 +298,29 @@
   <header class="topo">
     <button id="btn-voltar-log" class="btn-icone" type="button" aria-label="Voltar">←</button>
     <span>Eventos da Obra</span>
-    <button id="btn-exportar" class="btn-icone" type="button" title="Exportar log">⤓</button>
+    <div>
+      <button id="btn-salvar-obra" class="btn-icone" type="button" title="Salvar obra na galeria">💾</button>
+      <button id="btn-relatorio-pdf" class="btn-icone" type="button" title="Relatório PDF">📄</button>
+      <button id="btn-exportar" class="btn-icone" type="button" title="Exportar log">⤓</button>
+    </div>
   </header>
   <div id="lista-eventos" class="lista-eventos" role="log" aria-live="polite"></div>
+  <nav class="tab-bar" role="tablist">
+    <button class="tab" data-tab="principal" role="tab" type="button">Início</button>
+    <button class="tab" data-tab="config" role="tab" type="button">Obra</button>
+    <button class="tab" data-tab="metricas" role="tab" type="button">Métricas</button>
+    <button class="tab ativo" data-tab="log" role="tab" type="button">Eventos</button>
+  </nav>
+</section>
+
+<!-- TELA 5.7 — GALERIA DE OBRAS SALVAS (Diferencial #9) -->
+<section id="tela-galeria" class="tela" aria-hidden="true">
+  <header class="topo">
+    <button id="btn-voltar-galeria" class="btn-icone" type="button" aria-label="Voltar">←</button>
+    <span>Obras Salvas</span>
+    <button id="btn-abrir-galeria" class="btn-icone" type="button" title="Atualizar" hidden>↻</button>
+  </header>
+  <div id="lista-galeria" class="lista-galeria"></div>
   <nav class="tab-bar" role="tablist">
     <button class="tab" data-tab="principal" role="tab" type="button">Início</button>
     <button class="tab" data-tab="config" role="tab" type="button">Obra</button>

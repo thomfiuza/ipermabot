@@ -96,6 +96,15 @@ class Metricas {
     this._renderizarBateria();
     this._renderizarProduto();
     this._renderizarVelocidadeFaixas(estado, config);
+    this._renderizarPlanta(estado, config);
+    this._ultimaAlertaNivel = this._ultimaAlertaNivel || null;
+    const alerta = this.alertaProdutoRestante(estado, config);
+    if (alerta.nivel !== 'ok' && alerta.nivel !== this._ultimaAlertaNivel) {
+      if (typeof window !== 'undefined' && window.dispatchEvent) {
+        window.dispatchEvent(new CustomEvent('impbot:alerta-produto', { detail: alerta }));
+      }
+    }
+    this._ultimaAlertaNivel = alerta.nivel;
   }
 
   _atualizarKPIs(estado, config) {
@@ -207,6 +216,113 @@ class Metricas {
       Math.max(...intervals, 1)
     );
   }
+
+  /**
+   * Diferencial #2: alerta "produto vai faltar em X m²".
+   * Compara consumo médio atual com saldo restante.
+   * Retorna objeto {nivel: 'ok'|'warn'|'critico', m2_restantes, msg}.
+   */
+  alertaProdutoRestante(estado, config) {
+    const produtoAtualPct = estado.produto || 0;
+    const m2Feitos = estado.m2_feitos || 0;
+    const m2Total = estado.m2_total || config.m2 || 1;
+    const m2Restantes = Math.max(0, m2Total - m2Feitos);
+    if (m2Restantes <= 0) return { nivel: 'ok', m2_restantes: 0, msg: null };
+
+    let consumoMedio = 0;
+    for (let i = 1; i < this.snapshots.length; i++) {
+      const a = this.snapshots[i - 1];
+      const b = this.snapshots[i];
+      const dm = b.m2 - a.m2;
+      const dp = a.produto - b.produto;
+      if (dp > 0 && dm > 0) {
+        consumoMedio = dm / dp;
+        break;
+      }
+    }
+    if (consumoMedio <= 0) {
+      consumoMedio = (m2Feitos / Math.max(1, 100 - produtoAtualPct));
+    }
+
+    const produtoRestantePct = produtoAtualPct;
+    const m2EstimadosPeloSaldo = produtoRestantePct * consumoMedio;
+
+    let nivel = 'ok';
+    let msg = null;
+    if (m2EstimadosPeloSaldo < m2Restantes * 0.5) {
+      nivel = 'critico';
+      msg = `Produto atual não basta: falta para ${m2Restantes.toFixed(1)} m², mas o galão cobre ~${m2EstimadosPeloSaldo.toFixed(1)} m². Recarregue.`;
+    } else if (m2EstimadosPeloSaldo < m2Restantes) {
+      nivel = 'warn';
+      msg = `Atenção: restam ~${m2EstimadosPeloSaldo.toFixed(1)} m² de produto para ${m2Restantes.toFixed(1)} m² de obra. Considere recarregar.`;
+    }
+    return { nivel, m2_restantes: m2Restantes, m2_estimados: m2EstimadosPeloSaldo, msg };
+  }
+
+  /**
+   * Diferencial #1: Planta visual da obra em tempo real.
+   * Desenha a laje de cima com cada faixa colorida conforme status.
+   * - concluída  → verde (#2E7D32)
+   * - em execução → amarelo (#F9A825)
+   * - restante   → cinza (#CFD8DC)
+   * - "robo"     → ponto amarelo dentro da faixa atual
+   *
+   * Pure: testável isoladamente via desenharPlantaSVG().
+   */
+  _renderizarPlanta(estado, config) {
+    const svg = desenharPlantaSVG(estado, config);
+    const el = document.getElementById('grafico-planta');
+    if (!el) return;
+    el.innerHTML = svg;
+  }
+}
+
+/**
+ * Função pura exportada para teste sem DOM.
+ * Retorna string SVG representando a planta colorida da laje.
+ *
+ * @param {Object} estado  {faixa, faixa_atual, m2_feitos, m2_total, esp_estado}
+ * @param {Object} config  {largura_cm, comprimento_cm, num_faixas}
+ * @returns {string} SVG
+ */
+export function desenharPlantaSVG(estado, config) {
+  const W = 100, H = 100;
+  const num = Math.max(1, config.num_faixas || 1);
+  const feito = Math.max(0, Math.min(estado.faixa || 0, num));
+  const atual = estado.esp_estado === 'TRABALHANDO' && feito < num ? feito : -1;
+
+  // Laje externa (margem 4px)
+  const x0 = 4, y0 = 4, x1 = W - 4, y1 = H - 4;
+  // Largura de cada faixa horizontal (laje quadrada no viewbox)
+  const fw = (x1 - x0) / num;
+
+  let faixas = '';
+  for (let i = 0; i < num; i++) {
+    const x = x0 + i * fw;
+    let cor;
+    let label;
+    if (i < feito)        { cor = '#2E7D32'; label = `faixa ${i+1} concluída`; }
+    else if (i === atual) { cor = '#F9A825'; label = `faixa ${i+1} em execução`; }
+    else                  { cor = '#CFD8DC'; label = `faixa ${i+1} restante`; }
+
+    faixas += `<rect x="${x.toFixed(2)}" y="${y0}" width="${(fw - 1).toFixed(2)}" height="${(y1 - y0).toFixed(2)}" `
+            + `fill="${cor}" rx="1.5" role="img" aria-label="${label}">`
+            + `<title>${label}</title></rect>`;
+  }
+
+  // Robô (ponto dentro da faixa atual)
+  let robo = '';
+  if (atual >= 0 && estado.m2_feitos) {
+    const cx = x0 + atual * fw + fw / 2;
+    const cy = y0 + (y1 - y0) * 0.5;
+    robo = `<circle cx="${cx.toFixed(2)}" cy="${cy.toFixed(2)}" r="2.5" fill="#1565C0" `
+         + `stroke="#fff" stroke-width="0.6">`
+         + `<title>Robô em faixa ${atual + 1}</title></circle>`;
+  }
+
+  return `<rect x="${x0}" y="${y0}" width="${(x1-x0).toFixed(2)}" height="${(y1-y0).toFixed(2)}" `
+       + `fill="none" stroke="#1F4E79" stroke-width="0.6" rx="1.5"/>`
+       + faixas + robo;
 }
 
 export const metricas = new Metricas();

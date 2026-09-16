@@ -502,6 +502,35 @@ body {
   gap: 12px;
   padding: 0 16px 16px;
 }
+.metricas-planta {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  padding: 0 16px 16px;
+}
+#grafico-planta {
+  width: 100%;
+  height: 200px;
+  background: linear-gradient(135deg, #F5F7FA 0%, #E8EDF2 100%);
+  border-radius: 4px;
+}
+.planta-legenda {
+  font-size: 11px;
+  color: var(--texto-med);
+  margin: 8px 0 0;
+  text-align: center;
+}
+.lg-cor {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  margin: 0 4px 0 12px;
+  vertical-align: middle;
+}
+.lg-cor-feita  { background: #2E7D32; }
+.lg-cor-atual  { background: #F9A825; }
+.lg-cor-rest   { background: #CFD8DC; }
 
 /* ACESSIBILIDADE — texto maior e modo escuro */
 @media (prefers-color-scheme: dark) {
@@ -522,3 +551,45 @@ body {
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; }
 }
+
+/* Galeria de obras (Diferencial #9) */
+.lista-galeria {
+  padding: 12px 16px 16px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+.obra-card {
+  background: var(--branco);
+  border: 1.5px solid var(--cinza-borda);
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+.obra-card h3 {
+  margin: 0 0 4px;
+  font-size: 15px;
+  color: var(--azul-corp);
+}
+.obra-meta {
+  font-size: 11px;
+  color: var(--texto-claro);
+  margin: 0 0 8px;
+}
+.obra-stats {
+  font-size: 13px;
+  margin: 8px 0 10px;
+  color: var(--texto);
+}
+.obra-btns {
+  display: flex;
+  gap: 8px;
+}
+.btn-sec {
+  padding: 6px 12px;
+  border: 1px solid var(--cinza-borda);
+  background: var(--branco);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+}
+.btn-sec:hover { background: var(--azul-cla); }
