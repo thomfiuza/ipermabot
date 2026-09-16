@@ -14,6 +14,8 @@ import { simulador } from './simulator.js';
 import { log, logBook } from './log.js';
 import { metricas } from './metrics.js';
 import { salvarObra, listarObras, deletarObra, gerarRelatorioHTML, resumoObra } from './works.js';
+import { iniciarWizard } from './wizard.js';
+import { CATALOGO, TIPOS_LAJE, produtosCompativeis, calcularDemaos } from './produtos.js';
 import { ui } from './ui.js';
 import {
   holdToConfirm,
@@ -197,6 +199,30 @@ const _bindEventos = () => {
     }
   );
 
+  /* TELA 1 — MODO ASSISTENTE (Diferencial #6 — wizard passo-a-passo) */
+  document.getElementById('btn-assistente').addEventListener('click', () => {
+    const w = iniciarWizard(CATALOGO);
+    w.onConcluir = (contexto) => {
+      // Aplica o que o wizard coletou
+      if (contexto.largura_m) {
+        config.largura_cm = contexto.largura;
+        config.comprimento_cm = contexto.comprimento;
+        document.getElementById('cfg-largura').value = contexto.largura;
+        document.getElementById('cfg-comprimento').value = contexto.comprimento;
+      }
+      if (contexto.produto_id) {
+        config.produto_id = contexto.produto_id;
+        selProduto.value = contexto.produto_id;
+        if (selTipoLaje.value === 'laje_exposta') selTipoLaje.value = contexto.tipo_laje || 'laje_exposta';
+        config.tipo_laje = selTipoLaje.value;
+        config.demaos = contexto['demaos'];
+        document.getElementById('cfg-de-valor').value = contexto['demaos'];
+        _atualizarSugestaoDemaos();
+      }
+      log('info', 'Assistente concluído', `${contexto.largura_m || 0}m × ${contexto.comprimento_m || 0}m, ${contexto['demaos'] || 0} demaos`);
+    };
+  });
+
   /* TELA 3 — EMERGÊNCIA */
   holdToConfirm(
     document.getElementById('btn-reset-emergencia'),
@@ -266,6 +292,70 @@ const _bindEventos = () => {
   });
   document.getElementById('cfg-queda').addEventListener('input', (e) => { config.lim_queda_cm = +e.target.value || 25; });
   document.getElementById('cfg-obst').addEventListener('input',  (e) => { config.lim_obst_cm  = +e.target.value || 30; });
+
+  /* TELA 4 — CONFIG: produto e tipo de laje (Diferencial #8) */
+  const selProduto = document.getElementById('cfg-produto');
+  const selTipoLaje = document.getElementById('cfg-tipo-laje');
+  const outInfo = document.getElementById('cfg-produto-info');
+  const outDemaos = document.getElementById('cfg-demaos-sugeridas');
+
+  // Popula tipos de laje
+  if (selTipoLaje) {
+    selTipoLaje.innerHTML = TIPOS_LAJE.map(t =>
+      `<option value="${t.id}" ${config.tipo_laje === t.id ? 'selected' : ''}>${t.nome}</option>`
+    ).join('');
+    selTipoLaje.value = config.tipo_laje || 'laje_exposta';
+    selTipoLaje.addEventListener('change', () => {
+      config.tipo_laje = selTipoLaje.value;
+      atualizarListaProdutos();
+      _atualizarSugestaoDemaos();
+    });
+  }
+
+  const atualizarListaProdutos = () => {
+    const compativeis = produtosCompativeis(selTipoLaje?.value || 'laje_exposta');
+    selProduto.innerHTML = '<option value="">— escolha um produto —</option>'
+      + CATALOGO.map(p => {
+        const recom = compativeis.find(x => x.id === p.id) ? '★ ' : '  ';
+        return `<option value="${p.id}" ${config.produto_id === p.id ? 'selected' : ''}>${recom}${p.marca} — ${p.nome} (${p.demaos_recomendado} demãos)</option>`;
+      }).join('');
+    // Mantém a seleção atual
+    if (config.produto_id) selProduto.value = config.produto_id;
+  };
+  atualizarListaProdutos();
+  if (selProduto) {
+    selProduto.addEventListener('change', () => {
+      config.produto_id = selProduto.value;
+      config.produto = selProduto.value;
+      _atualizarSugestaoDemaos();
+    });
+  }
+
+  const _atualizarSugestaoDemaos = () => {
+    if (!outInfo || !outDemaos) return;
+    const pid = selProduto?.value;
+    const tipo = selTipoLaje?.value || 'laje_exposta';
+    const m2 = (config.largura_cm / 100) * (config.comprimento_cm / 100);
+    if (!pid) {
+      outInfo.textContent = '';
+      outDemaos.textContent = '';
+      return;
+    }
+    const p = CATALOGO.find(x => x.id === pid);
+    if (p) {
+      outInfo.innerHTML = `<strong>${p.marca}</strong> — ${p.nome}<br>` +
+        `Cobertura: <strong>${p.rendimento_m2_por_L}</strong> m²/L · ` +
+        `Intervalo entre demãos: <strong>${p.intervalo_entre_demaos_horas}h</strong><br>` +
+        `Validade: <strong>${p.prazo_validade_meses} meses</strong> · ` +
+        `Densidade: <strong>${p.densidade_kg_L} kg/L</strong>`;
+    }
+    const calc = calcularDemaos(pid, tipo, m2);
+    const txt = `💡 Sugerido: <strong>${calc.demaos} demaos</strong> — ` +
+                `${calc.litros_total} L (~${calc.kg_total} kg). ${calc.motivo}`;
+    outDemaos.innerHTML = txt;
+    config.demaos = calc.demaos;
+  };
+  _atualizarSugestaoDemaos();
 
   document.getElementById('btn-salvar-obra').addEventListener('click', () => {
     config.nome = document.getElementById('cfg-nome').value || 'Obra sem nome';

@@ -104,6 +104,9 @@
   </div>
 
   <div class="acoes-secundarias">
+    <button class="btn btn-primario" id="btn-assistente" type="button">
+      🧙 Modo Assistente (novatos)
+    </button>
     <button class="btn btn-secundario" id="btn-emergencia" type="button">
       🛑 Emergência (segurar 3s)
     </button>
@@ -163,17 +166,15 @@
     <label>Nº de faixas (calculado)</label>
     <output id="cfg-faixas" class="form-info" aria-live="polite">10 faixas de 30 cm</output>
 
-    <label for="cfg-produto">Produto</label>
+    <label for="cfg-produto">Produto (catálogo IMP-BOT)</label>
     <select id="cfg-produto">
-      <option>Vedapren Laje — 18L — 3,0 m²/L</option>
-      <option>Sika Sikalastic — 4 kg — 3,5 m²/L</option>
-      <option>Quartzolit Weber — 18L — 3,0 m²/L</option>
-      <option>Otto Baumgart Denvertec 540 — 18L — 4,0 m²/L</option>
-      <option>Vedacit Vedapren — 18L — 2,5 m²/L</option>
-      <option>Bautech Acrílica — 18L — 3,0 m²/L</option>
-      <option>Coral Wandepoxi — 3,6L — 4,0 m²/L</option>
-      <option>Outros</option>
+      <option value="">— escolha um produto —</option>
     </select>
+    <div id="cfg-produto-info" class="dica" aria-live="polite"></div>
+
+    <label for="cfg-tipo-laje">Tipo de laje</label>
+    <select id="cfg-tipo-laje"></select>
+    <output id="cfg-demaos-sugeridas" class="form-info" aria-live="polite"></output>
 
     <label for="cfg-de-valor">Demãos</label>
     <div class="stepper">
