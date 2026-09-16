@@ -137,6 +137,30 @@ O CI verifica todos os 4 automaticamente.
 3. Configure proteção de branch em `main` (exige revisão).
 4. Releia [CONTRIBUTING.md](CONTRIBUTING.md) antes do primeiro commit.
 
+## 📦 Backup Portátil (sempre incluso em cada release)
+
+Cada commit significativo gera um **`projeto-robo-impermeabilizador.bundle`**
+empacotando **todo o histórico Git num único arquivo** (~254 KB). Ele serve
+como cópia de segurança portátil — útil para arquivar em:
+- HD externo
+- Serviço de nuvem (S3, Drive, Dropbox)
+- Fita/disco de backup corporativo
+- Pen-drive de bolso
+
+**Para restaurar:**
+```bash
+bash RESTAURAR_BACKUP.sh   # clona o bundle em ./restored/
+```
+
+**Para regenerar o bundle:**
+```bash
+git bundle create projeto-robo-impermeabilizador.bundle --all
+```
+
+> 💡 O bundle Git é **independente de plataforma** (Windows, Linux, macOS),
+> **independente de credenciais**, e preserva todos os 20 commits + tags +
+> branches. É a forma mais robusta de levar seu histórico para qualquer lugar.
+
 ---
 
 > "A melhor engenharia não é a que faz milagre — é a que tem revisão contínua,
