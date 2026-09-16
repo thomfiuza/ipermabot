@@ -6,7 +6,49 @@ Todas as mudanças notáveis do projeto.
 
 ## [1.0.1] — 2026-09-16
 
-Veja o diff de commits para mudanças pontuais.
+### Mudança de marca: IMP-BOT → Ipermabot
+- **Pesquisa de anterioridade** confirmou que o nome **Ipermabot** não
+  está registrado no INPI nem usado por concorrentes. Disponível para
+  registro de marca no Brasil (classe 7 + classe 37).
+- Renomeação em **33 arquivos**: CHANGELOG, README, app/, firmware/,
+  docs/, tools/.
+- Domínio `imp-bot.exemplo.com` → `ipermabot.exemplo.com`.
+- E-mail `security@imp-bot.example` → `security@ipermabot.example`.
+- `package.json` name: `impbot-app` → `ipermabot-app`.
+- `manifest.json` (PWA) atualizado.
+
+### Documentação bilíngue PT/EN
+- Estrutura `docs/producao/{pt/,en/}` paralela (selecionada via
+  `ask_user`).
+- `docs/producao/index.html` raiz = seletor visual PT/EN.
+- 4 PNGs (assets/) compartilhados entre PT/EN.
+- 530 linhas markdown em cada idioma (paridade mantida).
+- Toolbar PT/EN fixa no canto superior direito de cada HTML.
+- 283 substituições PT→EN aplicadas via `tools/scripts/translate.py`.
+
+### Correções de bugs identificadas em revisão profunda
+1. **CRÍTICO**: `firmware` declarava `void configurarWiFi()` duas
+   vezes (linhas 1014 e 1016) → **não compilava**. Removida a
+   duplicação.
+2. **CRÍTICO**: `versao_fw` hardcoded como `"1.0.0"` em
+   `firmware/src/robo_impermeabilizador.ino:926` e `DEPLOY.md:311`.
+   Substituído por macro `FW_VERSAO` ("1.0.1 (0x010001)").
+3. **Inconsistência CSS**: variáveis `--azul-*` (PT) em
+   `docs/producao/` vs `--blue-*` (EN) em `app/css/style.css`.
+   Padronizado para inglês em toda a base.
+4. CSS `.lang-bar` duplicado no `en/index.html` (resíduo do tradutor).
+5. PT residual no `en/index.html` (Válvula, Modo, Suporte, Chassi).
+   Traduzidas todas as ocorrências residuais.
+6. `pt/index.html` não tinha toolbar de idiomas (desbalanceado com EN).
+   Adicionada com seletor PT/EN + link "voltar ao seletor".
+7. README badge mostrava versão 1.0.0 (desatualizado).
+   Atualizado para 1.0.1.
+
+### Validação final
+- ✅ **29/29 testes** unitários verdes
+- ✅ **Lint**: 0 erros / 30 avisos (todos em comentários)
+- ✅ **Validação firmware**: 0 erros
+- ✅ **Coerência protocolo**: 100% (17/17 eventos)
 
 ## [Unreleased] pré-1 — 2026-09-16
 
