@@ -56,7 +56,7 @@ class LogBook {
       const hora = new Date(e.data).toLocaleString('pt-BR');
       return `[${hora}] ${e.tipo.toUpperCase().padEnd(8)} — ${e.titulo}${e.desc ? ' — ' + e.desc : ''}`;
     }).join('\n');
-    const cab = `IMP-BOT — Relatório de Obra\nObra: ${nomeObra}\nGerado em: ${new Date().toLocaleString('pt-BR')}\nEventos: ${this.eventos.length}\n\n`;
+    const cab = `Ipermabot — Relatório de Obra\nObra: ${nomeObra}\nGerado em: ${new Date().toLocaleString('pt-BR')}\nEventos: ${this.eventos.length}\n\n`;
     return cab + linhas;
   }
 }

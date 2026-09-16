@@ -33,7 +33,7 @@ export const configInicial = () => Object.freeze({
   lim_queda_cm: 25,
   lim_obst_cm: 30,
   ip_esp32: '192.168.4.1',
-  wifi_ssid: 'IMP-BOT-001'
+  wifi_ssid: 'Ipermabot-001'
 });
 
 /** Estado em tempo real (mutável, gerenciado por State) */

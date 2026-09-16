@@ -237,7 +237,7 @@ export function gerarRelatorioHTML(obra, snapshots = []) {
 </div>
 
 <p style="font-size:11px;color:#6B7280;margin-top:32px;text-align:center">
-  Relatório gerado automaticamente pelo IMP-BOT PWA · ${new Date().toLocaleString('pt-BR')}
+  Relatório gerado automaticamente pelo Ipermabot PWA · ${new Date().toLocaleString('pt-BR')}
 </p>
 
 </body>

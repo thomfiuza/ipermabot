@@ -14,7 +14,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const dirRaiz = join(__dirname, '..', '..');
 const dirTestes = __dirname;
 
-console.log('🧪 IMP-BOT — rodando suite de testes (app/\n)');
+console.log('🧪 Ipermabot — rodando suite de testes (app/\n)');
 
 const arquivos = readdirSync(dirTestes).filter(f => f.endsWith('.test.js'));
 let falhas = 0;

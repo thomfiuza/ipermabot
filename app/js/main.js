@@ -1,7 +1,7 @@
 /**
  * main.js — Composição de todos os módulos e bind de eventos.
  *
- * Arquivo de entrada do PWA IMP-BOT. Mantido enxuto para isolar o ciclo
+ * Arquivo de entrada do PWA Ipermabot. Mantido enxuto para isolar o ciclo
  * de inicialização da lógica de negócio.
  *
  * @module main
@@ -510,7 +510,7 @@ const _init = () => {
       ui.toast(a.msg, tipo === 'erro' ? 'erro' : 'warn');
     }
   });
-  log('info', 'App aberto', 'IMP-BOT v1.0 carregado');
+  log('info', 'App aberto', 'Ipermabot v1.0 carregado');
 };
 
 if (document.readyState === 'loading') {

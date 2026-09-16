@@ -1,34 +1,34 @@
-# 📐 Esquemático de Produção — IMP-BOT v1.0.1
+# 📐 Production Schematic — Ipermabot v1.0.1
 
-> Documento técnico completo para fabricação, montagem e homologação do
-> protótipo do robô aplicador de impermeabilizante.
+> Complete technical document for manufacturing, assembly, and certification of the
+> waterproofing applicator robot prototype.
 
 ---
 
-## 1. Visão geral
+## 1. Overview
 
-O **IMP-BOT** é um robô autônomo de laje (~30 × 40 cm, ~5 kg) que aplica
-impermeabilizante líquido com precisão de ±2 cm, comandado por uma PWA via
-Wi-Fi local, alimentado por bateria 12V com carregador integrado.
+The **Ipermabot** is an autonomous slab robot (~30 × 40 cm, ~5 kg) que aplica
+impermeabilizante líquido with ±2 cm precision, controlled via a PWA via
+Wi-Fi local, alimentado por bateria 12V with integrated charger.
 
-### Arquitetura geral
+### General Architecture
 
 | Camada | Função | Especificação |
 |---|---|---|
-| **1. Sensores** | Captar estado do mundo | Ultrassom (4x), IMU (1x), Encoder (2x), Bateria |
-| **2. Controle** | Decidir movimento, telemetria, eventos | ESP32-WROOM-32 + Arduino |
-| **3. Atuadores** | Executar ação | 2 motores DC + 1 solenoide (válvula) |
-| **4. Energia** | Fornecer e proteger | Bateria 12V LiFePO4 + chave + fusível + E-Stop |
-| **5. Estrutura** | Suporte mecânico | Chassi em aço inox, rodas de borracha + caster |
-| **6. Interface** | Operador + cliente | PWA smartphone + botões físicos |
+| **1. Sensors** | Capture world state | Ultrasonic (4x), IMU (1x), Encoder (2x), Battery |
+| **2. Control** | Decide motion, telemetry, events | ESP32-WROOM-32 + Arduino |
+| **3. Actuators** | Execute action | 2 DC motors + 1 solenoid (valve) |
+| **4. Power** | Supply and protect | 12V LiFePO4 battery + switch + fuse + E-Stop |
+| **5. Structure** | Mechanical support | Stainless steel chassis, rubber wheels + caster |
+| **6. Interface** | Operator + client | Smartphone PWA + physical buttons |
 
-### Diagrama de blocos
+### Block Diagram
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
 │                         ENERGIA                              │
 │                                                              │
-│  Bateria 12V ─► Chave geral ─► Fusível 10A ─► E-STOP NC      │
+│  Bateria 12V ─► Key geral ─► Fusível 10A ─► E-STOP NC      │
 │                                       │                     │
 │                              ┌────────┴────────┐            │
 │                              │ 12V (motores/   │            │
@@ -89,8 +89,8 @@ Wi-Fi local, alimentado por bateria 12V com carregador integrado.
 | LED verde | 16 | Saída digital |
 | LED vermelho | 17 | Saída digital |
 | Buzzer | 5 | Saída digital + transistor driver |
-| Botão START | 13 | INPUT_PULLUP |
-| Botão E-STOP | 32 | INPUT_PULLUP, NA (normalmente fechado) |
+| Button START | 13 | INPUT_PULLUP |
+| Button E-STOP | 32 | INPUT_PULLUP, NA (normalmente fechado) |
 
 > **Nota sobre conflito de pinos I2C/US-Direita**: o firmware atual usa
 > 21/22 para I2C com BNO055. Para V2.0 deve-se mover US Direita para outro par,
@@ -98,11 +98,11 @@ Wi-Fi local, alimentado por bateria 12V com carregador integrado.
 
 ---
 
-## 2. Lista de Materiais (BOM)
+## 2. Bill of Materials (BOM)
 
 Custos baseados em mercado BR ($BRL). Versão R1 — protótipo homologável.
 
-### 2.1 Componentes eletrônicos
+### 2.1 Electronic Components
 
 | # | Componente | Qtd | Especificação | Custo unit. R$ | Total R$ |
 |---|---|---|---|---|---|
@@ -111,12 +111,12 @@ Custos baseados em mercado BR ($BRL). Versão R1 — protótipo homologável.
 | 3 | BTS7960 H-bridge | 2 | 43 A pico, motor driver | 45,00 | 90,00 |
 | 4 | HC-SR04 ultrassônico | 4 | Distância 2–400 cm | 9,50 | 38,00 |
 | 5 | Módulo relé 5V | 1 | 1 canal, optoacoplado, 10 A | 8,00 | 8,00 |
-| 6 | Encoder óptico | 2 | 360 pulsos/volta, 5V | 12,00 | 24,00 |
+| 6 | Optical encoder | 2 | 360 pulsos/volta, 5V | 12,00 | 24,00 |
 | 7 | LED 5mm verde | 1 | High-bright, 3V3 | 0,50 | 0,50 |
 | 8 | LED 5mm vermelho | 1 | High-bright, 3V3 | 0,50 | 0,50 |
 | 9 | Buzzer ativo | 1 | 5V, 85 dB | 6,00 | 6,00 |
-| 10 | Botão cogumelo E-Stop | 1 | NC, trava mecânica (segurança) | 35,00 | 35,00 |
-| 11 | Botão momentâneo START | 1 | Normalmente aberto, painel | 8,00 | 8,00 |
+| 10 | Button cogumelo E-Stop | 1 | NC, trava mecânica (segurança) | 35,00 | 35,00 |
+| 11 | Button momentâneo START | 1 | Standardlmente aberto, painel | 8,00 | 8,00 |
 | 12 | Resistor 10 kΩ 1/4 W | 2 | Pull-up para encoders | 0,10 | 0,20 |
 | 13 | Resistor 330 Ω 1/4 W | 2 | Limitação corrente LED | 0,10 | 0,20 |
 | 14 | Capacitor eletrolítico 1000 µF | 1 | Filtragem 5V (suaviza) | 2,00 | 2,00 |
@@ -125,14 +125,14 @@ Custos baseados em mercado BR ($BRL). Versão R1 — protótipo homologável.
 | 17 | Fusível 10 A 32V | 1 | Lâmina automotiva | 3,00 | 3,00 |
 | 18 | Porta-fusível | 1 | Painel | 2,50 | 2,50 |
 | 19 | Jack DC 2.1mm | 1 | Painel | 3,00 | 3,00 |
-| 20 | Borneira 2-vias 5mm | 6 | Conexão motores/encoders/ultrassom | 1,50 | 9,00 |
+| 20 | Terminalira 2-vias 5mm | 6 | Connection motores/encoders/ultrassom | 1,50 | 9,00 |
 | 21 | Conversor DC-DC Buck | 1 | 12V→5V, 3A (para solenoides) | 12,00 | 12,00 |
 | 22 | Regulador LDO 3V3 | 1 | LM1117 ou similar (ESP32 supply) | 3,00 | 3,00 |
 | 23 | Cabo silicone 16 AWG | 2 m | Ligação bateria | 4,00 | 4,00 |
 | 24 | Jumper wire Dupont | 40 | 20 cm M-F | 6,00 | 6,00 |
 | **Subtotal eletrônico** | | | | | **380,20** |
 
-### 2.2 Mecânica e bateria
+### 2.2 Mechanics and Battery
 
 | # | Componente | Qtd | Especificação | Custo unit. R$ | Total R$ |
 |---|---|---|---|---|---|
@@ -144,13 +144,13 @@ Custos baseados em mercado BR ($BRL). Versão R1 — protótipo homologável.
 | 30 | Suporte rolo pintura | 1 | Alumínio + eixo M8 | 18,00 | 18,00 |
 | 31 | Rolo pintura 23 cm | 1 | Lã carneiro pelo curto | 12,00 | 12,00 |
 | 32 | Válvula solenoide 12V | 1 | 1/2" NPT, latão, NF | 85,00 | 85,00 |
-| 33 | Mangueira silicone | 1 m | 8×10mm | 9,00 | 9,00 |
-| 34 | Conexão galão | 1 | Rosca + tampa | 11,00 | 11,00 |
+| 33 | Hose silicone | 1 m | 8×10mm | 9,00 | 9,00 |
+| 34 | Connection galão | 1 | Rosca + tampa | 11,00 | 11,00 |
 | 35 | Galão reservatório 5L | 1 | Plástico PEAD, boca larga | 32,00 | 32,00 |
-| 36 | Bateria LiFePO4 12V 30Ah | 1 | BMS integrado, BMS 30A | 580,00 | 580,00 |
-| 37 | Carregador LiFePO4 14.6V | 1 | 5A balanceado | 145,00 | 145,00 |
-| 38 | Parafusos M3/M4/M5 | 60 | Kit variado inox | 18,00 | 18,00 |
-| 39 | Abraçadeiras nylon | 20 | Diversas | 3,00 | 3,00 |
+| 36 | LiFePO4 battery 12V 30Ah | 1 | BMS integrado, BMS 30A | 580,00 | 580,00 |
+| 37 | Charger LiFePO4 14.6V | 1 | 5A balanceado | 145,00 | 145,00 |
+| 38 | M3 screws/M4/M5 | 60 | Kit variado inox | 18,00 | 18,00 |
+| 39 | Clamps nylon | 20 | Diversas | 3,00 | 3,00 |
 | 40 | Fita isolante + termo | 2 | Diversas | 5,00 | 5,00 |
 | 41 | Adesivo estrutural | 1 | 50ml epóxi | 12,00 | 12,00 |
 | **Subtotal mecânico/bateria** | | | | | **1301,00** |
@@ -164,7 +164,7 @@ Custos baseados em mercado BR ($BRL). Versão R1 — protótipo homologável.
 | 44 | Pasta de solda SAC305 | 50 g | 35,00 |
 | **Subtotal PCB** | | | **165,00** (5 unidades) |
 
-### Custo total por unidade
+### Total Cost per Unit
 
 | Categoria | R$ |
 |---|---|
@@ -175,16 +175,16 @@ Custos baseados em mercado BR ($BRL). Versão R1 — protótipo homologável.
 
 > **Margem para revenda sugerida** (3–4x): R$ 5.500,00–7.000,00
 > Comparar com concorrente internacional (SprayWorks Spraybot ≈
-> USD 12.000 = R$ 60.000) — IMP-BOT R1 entrega 80% do valor por 1/10 do preço.
+> USD 12.000 = R$ 60.000) — Ipermabot R1 entrega 80% do valor por 1/10 do preço.
 
 ---
 
-## 3. Vista 3D e gabinete
+## 3. 3D View and Enclosure
 
-![Vista 3D do robô IMP-BOT](assets/robot_3d_render.png)
+![Vista 3D do robô Ipermabot](assets/robot_3d_render.png)
 
 > Dimensões externas finais: **400 mm comprimento × 300 mm largura × 280 mm altura**.
-> Massa total com bateria: **5,2 kg** (sem produto).
+> Mass total com bateria: **5,2 kg** (sem produto).
 > Capacidade reservatório: **5 L** (rende ~30 m²/demão).
 
 ### 3.1 Vista explodida (texto)
@@ -192,7 +192,7 @@ Custos baseados em mercado BR ($BRL). Versão R1 — protótipo homologável.
 ```
         [3] Tampa superior (PS 3mm) ← botão E-Stop + START
               │
-        [2] Painel frontal — display LED, LEDs status
+        [2] Front panel — display LED, LEDs status
               │
         [4] PCB controladora (fixada por 4 parafusos M3)
               │
@@ -209,18 +209,18 @@ Custos baseados em mercado BR ($BRL). Versão R1 — protótipo homologável.
 [Rolo pintura 23cm] no chassi frontal (rente ao chão).
 ```
 
-![Vista explodida do chassi IMP-BOT](assets/gabinete_explosao.png)
+![Vista explodida do chassi Ipermabot](assets/gabinete_explosao.png)
 
-### 3.2 Lista de peças mecânicas (fabricação)
+### 3.2 Mechanical Parts List (manufacturing)
 
-| Peça | Material | Dimensões | Qtd | Processo |
+| Peça | Material | Dimensões | Qtd | Process |
 |---|---|---|---|---|
 | Chassi principal | Aço inox 304 3 mm | 400×300 mm com dobra 90° 25 mm altura | 1 | Corte laser + dobra CNC |
 | Tampa superior | PS 3 mm (Poliestireno) | 350×250 mm com furos para botões | 1 | Corte laser |
 | Suporte motor | Alumínio 5 mm | 80×40 mm com 4 furos M4 | 2 | Corte laser |
 | Suporte E-Stop | PETG impresso 3D | Sob medida | 1 | Impressão 3D |
 | Suporte sensor solo | Aço inox 2 mm | 40×30 mm com furo M16 | 1 | Corte laser |
-| Suporte galão | PETG impresso 3D | Diâmetro interno 165 mm | 1 | Impressão 3D |
+| Suporte galão | PETG impresso 3D | Diameter interno 165 mm | 1 | Impressão 3D |
 
 ---
 
@@ -255,7 +255,7 @@ Custos baseados em mercado BR ($BRL). Versão R1 — protótipo homologável.
 > **Nota**: 12V alimenta motores DC direto. 5V alimenta válvula solenoide
 > (que usa relé para chavear 12V). 3V3 (via LDO) alimenta ESP32 e I2C.
 
-#### 4.1.2 Conexão ESP32 ↔ Motores (BTS7960)
+#### 4.1.2 Connection ESP32 ↔ Motores (BTS7960)
 
 | BTS7960 pin | ESP32 GPIO |
 |---|---|
@@ -311,11 +311,11 @@ Custos baseados em mercado BR ($BRL). Versão R1 — protótipo homologável.
 
 ---
 
-## 5. PCB custom
+## 5. Custom PCB
 
 ![Vista superior da PCB](assets/pcb_top_view.png)
 
-### 5.1 Topologia da PCB
+### 5.1 PCB Topology
 
 - **Tamanho**: 100 × 80 mm, 2 layers, 1.6 mm FR4, HASL lead-free
 - **Lado Top**: componentes principais (ESP32, BNO055, conectores)
@@ -371,24 +371,24 @@ Custos baseados em mercado BR ($BRL). Versão R1 — protótipo homologável.
 
 ### 5.3 Notas de fabricação
 
-- **Máscara de solda**: verde (Padrão JLCPCB/FusionPCB)
+- **Solder mask**: verde (Padrão JLCPCB/FusionPCB)
 - **Silkscreen**: branca, fonte 1.6 mm
 - **Vias**: 0.3 mm drill, 0.6 mm pad, totalmente cobertas (tented) sob o ESP32
 - **Acabamento**: HASL lead-free, ENIG se for para ambiente úmido
-- **Espessura**: 1.6 mm (mínimo para suportar torque dos bornes)
+- **Thickness**: 1.6 mm (mínimo para suportar torque dos bornes)
 
 ---
 
 ## 6. Conflitos de pinagem e roadmap (conhecidos)
 
-| ID | Conflito | Origem | Mitigação V1.1 | Custo |
+| ID | Conflito | Origem | Mitigation V1.1 | Custo |
 |---|---|---|---|---|
 | **PCN-001** | GPIO 21/22 (I2C IMU) vs US-Direita | firmware legado | Trocar I2C para GPIO 17/5 (ou mover US Dir para GPIO 1/3) | 1 jumper na PCB |
 | **PCN-002** | TRIG US-Solo no GPIO 33 conflita com boot do ESP32 | — | Durante flash, evitar pulso em GPIO 33 (não usar nesse momento) | 0 |
 | **PCN-003** | Mover US para usar GPIOs sem conflito (>34 todos são input-only) | Restrição física | Trocar US Esquerda/Solo TRIG para GPIOs 2/15 (boot-safe?) | Reescrever driver |
 | **PCN-004** | Relé único para válvula pode aguentar? Corrente solenóide: ~0,5 A | OK | — | 0 |
 
-### Roadmap V1.1 (planejado)
+### V1.1 Roadmap (planned)
 
 - [ ] Resolver conflito I2C / ultrassom (PCN-001)
 - [ ] Adicionar autenticação HMAC nos comandos WebSocket (defesa contra
@@ -401,9 +401,9 @@ Custos baseados em mercado BR ($BRL). Versão R1 — protótipo homologável.
 
 ---
 
-## 7. Critérios de aceitação e ensaios
+## 7. Acceptance Criteria and Testing
 
-### 7.1 Ensaios elétricos (pré-homologação)
+### 7.1 Electrical Tests (pré-homologação)
 
 - [ ] Continuidade de GND em todo o chassi (multímetro, modo beep)
 - [ ] Resistência de isolação ≥ 1 MΩ entre 12V e chassi (megôhmetro 500V)
@@ -411,14 +411,14 @@ Custos baseados em mercado BR ($BRL). Versão R1 — protótipo homologável.
 - [ ] Inversão de polaridade: diodo TVS/PTC evita queimar
 - [ ] Tensão bateria em carga mínima: ≥ 10.8V → corte automático (BMS)
 
-### 7.2 Ensaios funcionais
+### 7.2 Functional Tests
 
 - [ ] Loop de testes (`node tools/scripts/review.mjs`) — 4/4 verde
 - [ ] Boot em ≤ 8 s (LED verde sólido)
-- [ ] Telemetria 1 Hz ± 0.1 Hz por 5 min contínuos
+- [ ] Telemetry 1 Hz ± 0.1 Hz por 5 min contínuos
 - [ ] Modo simulador: 30 min sem desconexão
-- [ ] Conexão Wi-Fi cliente em ≤ 15 s após ligar AP
-- [ ] Botão E-Stop: parar motores + fechar válvula em ≤ 200 ms
+- [ ] Connection Wi-Fi cliente em ≤ 15 s após ligar AP
+- [ ] Button E-Stop: parar motores + fechar válvula em ≤ 200 ms
 
 ### 7.3 Ensaios em campo
 
@@ -430,11 +430,11 @@ Custos baseados em mercado BR ($BRL). Versão R1 — protótipo homologável.
   - Concluir 5 demãos com autonomia de bateria
   - Relatório PDF final do app + galeria multi-obra
 
-### 7.4 Ensaios ambientais
+### 7.4 Environmental Tests
 
-- [ ] Temperatura operação: 0 – 50 °C (verão quente + inverno frio)
-- [ ] Umidade relativa: 30 – 90% (sem condensação)
-- [ ] Vibração: ≤ 2.5 m/s² RMS contínuo (não dispara `vibracao_excessiva`)
+- [ ] Temperature operação: 0 – 50 °C (verão quente + inverno frio)
+- [ ] Relative humidity: 30 – 90% (sem condensação)
+- [ ] Vibration: ≤ 2.5 m/s² RMS contínuo (não dispara `vibracao_excessiva`)
 - [ ] IP54: protegido contra poeira + jato d'água (chuva leve)
 
 ### 7.5 Ensaios de segurança (normativos)
@@ -449,23 +449,23 @@ Custos baseados em mercado BR ($BRL). Versão R1 — protótipo homologável.
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│  Bancada de testes — IMP-BOT R1                                     │
+│  Bancada de testes — Ipermabot R1                                     │
 │  (área 2m × 2m, piso de concreto pintado branco)                    │
 │                                                                     │
 │     [Alimentação]                                                    │
 │        AC 110V                                                       │
 │         │                                                            │
-│         ├──[Multímetro TRUE RMS]── V/A/W monitoramento               │
+│         ├──[Multimeter TRUE RMS]── V/A/W monitoramento               │
 │         │                                                            │
-│     [Carregador LiFePO4]──[Bateria 12V 30Ah]──[Fusível 10A]         │
+│     [Charger LiFePO4]──[Bateria 12V 30Ah]──[Fusível 10A]         │
 │                                                       │              │
 │                                            ┌──────────┴─────────┐    │
 │                                            │  Robô em teste     │    │
 │                                            │  400×300 mm        │    │
-│  ┌───[OSCILOSCÓPIO]───┐                   │   ┌─────────────┐   │    │
+│  ┌───[OSICLOSCÓPIO]───┐                   │   ┌─────────────┐   │    │
 │  │ Canal 1: SDA       │      ───────────  │   │   E-STOP     │   │    │
 │  │ Canal 2: SCL       │      WebSocket    │   │     ┌─┐      │   │    │
-│  │ Canal 3: RPWM Motor│      Telemetria   │   │  R  │●│ V    │   │    │
+│  │ Canal 3: RPWM Motor│      Telemetry   │   │  R  │●│ V    │   │    │
 │  │ Canal 4: ECHO US   │      1Hz          │   │  O  └─┘ L    │   │    │
 │  └────────────────────┘                   │   └─────────────┘   │    │
 │  ┌───[SMARTPHONE]─────┐                   │                     │    │
@@ -485,13 +485,13 @@ Custos baseados em mercado BR ($BRL). Versão R1 — protótipo homologável.
 |---|---|---|
 | Corte laser chassi + tampas | 30 min | Cortador laser 80W |
 | Dobra CNC | 15 min | Dobradeira manual |
-| Soldagem suportes | 30 min | MIG/MAG |
+| Soldergem suportes | 30 min | MIG/MAG |
 | Impressão 3D suportes específicos | 2 h | Impressora PETG |
-| Montagem da PCB | 1 h | Ferro de solda ou stencil |
-| Montagem dos componentes | 1,5 h | Chaves de fenda |
+| Assembly da PCB | 1 h | Ferro de solda ou stencil |
+| Assembly dos componentes | 1,5 h | Keys de fenda |
 | Cabeamento | 1,5 h | Alicate, soldador |
-| Montagem final no chassi | 1 h | — |
-| Programação e teste | 2 h | Cabo USB, monitor serial |
+| Assembly final no chassi | 1 h | — |
+| Programação e teste | 2 h | USB cable, monitor serial |
 | **TOTAL fabricação** | **~ 10h** | |
 
 ### Custo-MO (Mão de Obra)

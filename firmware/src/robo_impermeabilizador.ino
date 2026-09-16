@@ -36,7 +36,7 @@
 // 1.0.0 = 0x010000, 1.0.1 = 0x010001, etc. (XX.YY.ZZ em hexadecimal).
 #define FW_VERSAO      "1.0.1 (0x010001)"
 #define FW_VERSAO_HEX  0x010001
-#define FW_NOME        "IMP-BOT"
+#define FW_NOME        "Ipermabot"
 
 // ============================================================================
 // 1. MAPA DE PINOS — onde cada fio está ligado no ESP32
@@ -923,7 +923,7 @@ void processarComandoWS(uint8_t num, const char* payload, size_t len) {
   if (c == "ping") {
     resposta += "\"pong\":1,\"uptime_s\":"; resposta += String(millis() / 1000);
   } else if (c == "info") {
-    resposta += "\"modelo\":\"IMP-BOT-V1\",\"versao_fw\":\"1.0.0\",\"ip\":\""; resposta += WiFi.localIP().toString();
+    resposta += "\"modelo\":\"Ipermabot-V1\",\"versao_fw\":\"" FW_VERSAO "\",\"ip\":\""; resposta += WiFi.localIP().toString();
     resposta += "\",\"wifi_rssi\":"; resposta += String(WiFi.RSSI());
   } else if (c == "status") {
     resposta += "\"estado\":\""; resposta += estadoNomeStr(estadoAtual);
@@ -1012,8 +1012,6 @@ float lerBateriaPct() { return 78.0; }
 float lerProdutoPct() { return 65.0; }
 
 void configurarWiFi() {
-
-void configurarWiFi() {
 #if WIFI_HABILITADO
   Serial.print("Conectando ao Wi-Fi ");
   Serial.println(WIFI_SSID);
@@ -1035,12 +1033,12 @@ void configurarWiFi() {
     servidorHTTP.on("/", []() {
       String html = "<html><head><meta charset='utf-8'>"
                     "<meta name='viewport' content='width=device-width,initial-scale=1'>"
-                    "<title>IMP-BOT</title>"
+                    "<title>Ipermabot</title>"
                     "<style>body{font-family:sans-serif;text-align:center;padding:20px;background:#1F4E79;color:#fff}"
                     "h1{font-size:1.5em}a{display:block;margin:10px;padding:15px;font-size:18px;text-decoration:none;border-radius:8px;color:#fff}"
                     ".i{background:#2E7D32}.p{background:#C62828}</style>"
                     "</head><body>"
-                    "<h1>IMP-BOT</h1>"
+                    "<h1>Ipermabot</h1>"
                     "<p>Use o PWA (app) para controle total.</p>"
                     "<p><small>Estado: " + String((int)estadoAtual) + "</small></p>"
                     "<a class='i' href='/iniciar'>INICIAR</a>"

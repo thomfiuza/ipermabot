@@ -1,4 +1,4 @@
-/* IMP-BOT — Service Worker
+/* Ipermabot — Service Worker
    Cache-first para performance offline. v1.0
 */
 const CACHE = 'impbot-v1.0';

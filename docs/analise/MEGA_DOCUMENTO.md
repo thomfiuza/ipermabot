@@ -1,4 +1,4 @@
-# 📚 MEGA DOCUMENTO — IMP-BOT
+# 📚 MEGA DOCUMENTO — Ipermabot
 
 > Documento-mestre: índice absoluto do projeto. Se você só puder ler UMA
 > coisa, que seja esta. Tudo o que existe no repositório está aqui
@@ -60,7 +60,7 @@ Pages (workflow já está pronto).
 2. Mude `#define WIFI_HABILITADO 0` para `1`.
 3. Configure `WIFI_SSID` e `WIFI_SENHA`.
 4. Compile e envie ao ESP32.
-5. No app, clique em "Tentar novamente" — ele busca a rede `IMP-BOT-XXX`.
+5. No app, clique em "Tentar novamente" — ele busca a rede `Ipermabot-XXX`.
 
 ---
 
@@ -110,7 +110,7 @@ node tools/scripts/review.mjs
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                       IMP-BOT (monorepo)                     │
+│                       Ipermabot (monorepo)                     │
 ├─────────────────────────────────────────────────────────────┤
 │                                                              │
 │  ┌──────────────────┐         ┌──────────────────────┐     │
@@ -405,7 +405,7 @@ git commit -m "feat(app): adiciona tela X com suporte a Y"
 
 ## 📌 Resumo
 
-> **IMP-BOT v1.0** é um protótipo funcional de um robô aplicador de
+> **Ipermabot v1.0** é um protótipo funcional de um robô aplicador de
 > impermeabilizante, com:
 >
 > - **34 arquivos** no repositório
@@ -423,4 +423,4 @@ git commit -m "feat(app): adiciona tela X com suporte a Y"
 
 *"O melhor código é o código que pode ser melhorado sem medo."*
 
-*IMP-BOT Engineering Principles*
+*Ipermabot Engineering Principles*

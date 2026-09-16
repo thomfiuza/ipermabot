@@ -1,6 +1,6 @@
 {
-  "name": "IMP-BOT — Painel do Robô",
-  "short_name": "IMP-BOT",
+  "name": "Ipermabot — Painel do Robô",
+  "short_name": "Ipermabot",
   "description": "Controle remoto do Robô Aplicador de Impermeabilizante. Funciona offline.",
   "start_url": "./index.html",
   "scope": "./",

@@ -93,7 +93,7 @@ eu não posso fazer pelo simples fato de não ter acesso pessoal ao mundo real.
 | **Alvará da prefeitura** | Para emitir NF e operar | Prefeitura local | R$ 0 – R$ 300 |
 | **Contador mensal** | Obrigatório mesmo MEI/Simples | Buscar indicação ou freelancer | R$ 150 – R$ 300/mês |
 | **Certificado Digital (e-CNPJ)** | Para assinar NFe, e-CAC, etc. | Casas credenciadas (ex: Certisign) | R$ 200 – R$ 500/ano |
-| **Registro de marca (INPI)** | Proteção do nome "IMP-BOT" e variantes | Site INPI | R$ 440 + R$ 500 honorários advogado |
+| **Registro de marca (INPI)** | Proteção do nome "Ipermabot" e variantes | Site INPI | R$ 440 + R$ 500 honorários advogado |
 | **Inscrição estadual** (se houver) | Depende do estado | SEFAZ local | R$ 0 – R$ 200 |
 
 #### Contas em plataformas técnicas

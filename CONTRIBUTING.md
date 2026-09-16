@@ -1,4 +1,4 @@
-# Contribuindo com o IMP-BOT
+# Contribuindo com o Ipermabot
 
 Obrigado por querer ajudar. Este projeto segue **GitFlow simplificado** e CI obrigatório.
 

@@ -1,4 +1,4 @@
-# 📱 Especificação do MVP do App — IMP-BOT
+# 📱 Especificação do MVP do App — Ipermabot
 
 > Documento técnico-funcional para guiar o desenvolvimento do app.
 > **Complementa** os wireframes SVG (mesma pasta) e o protocolo ESP32 (Anexo C).
@@ -9,7 +9,7 @@
 
 | Item | Valor |
 |---|---|
-| **Nome do produto** | IMP-BOT |
+| **Nome do produto** | Ipermabot |
 | **Função** | Painel de controle remoto + telemetria + log para o Robô Aplicador |
 | **Usuários primários** | Operador em obra (com luva, sob sol, 1 mão livre) |
 | **Plataforma-alvo** | PWA (Progressive Web App) — funciona em Android, iOS, desktop |

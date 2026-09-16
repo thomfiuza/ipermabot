@@ -2,7 +2,7 @@
 
 > **Status:** ✅ Aceita (com reavaliação futura se requisito mudar)  
 > **Data:** Setembro/2026  
-> **Decisor:** IMP-BOT Dev
+> **Decisor:** Ipermabot Dev
 
 ## Contexto
 

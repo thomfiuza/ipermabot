@@ -28,7 +28,7 @@ const etapas = [
 ];
 
 console.log('╔════════════════════════════════════════════════════════╗');
-console.log('║  IMP-BOT — REVISÃO CONTÍNUA DE CÓDIGO                 ║');
+console.log('║  Ipermabot — REVISÃO CONTÍNUA DE CÓDIGO                 ║');
 console.log('╚════════════════════════════════════════════════════════╝\n');
 
 const resultados = [];

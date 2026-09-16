@@ -163,7 +163,7 @@ class PaginaDoc(canvas.Canvas):
         # Texto do rodapé
         c.setFont('Italic' if 'Italic' in REG else 'Helvetica', 8)
         c.setFillColor(COR_TEXTO_MED)
-        c.drawString(2*cm, 1.0*cm, "IMP-BOT — Dossiê de Viabilidade")
+        c.drawString(2*cm, 1.0*cm, "Ipermabot — Dossiê de Viabilidade")
         c.drawCentredString(A4[0]/2, 1.0*cm, f"Página {pagina_atual} de {total_paginas}")
         c.drawRightString(A4[0]-2*cm, 1.0*cm, "Setembro/2026 — v1.0")
 
@@ -466,9 +466,9 @@ def main():
         leftMargin=2*cm, rightMargin=2*cm,
         topMargin=2*cm, bottomMargin=2.5*cm,
         title=args.titulo,
-        author=args.autor or "IMP-BOT",
+        author=args.autor or "Ipermabot",
         subject="Dossiê de Viabilidade",
-        creator="IMP-BOT Tools"
+        creator="Ipermabot Tools"
     )
 
     doc.build(

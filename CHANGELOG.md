@@ -1,4 +1,4 @@
-# Changelog — IMP-BOT
+# Changelog — Ipermabot
 
 Todas as mudanças notáveis do projeto.
 

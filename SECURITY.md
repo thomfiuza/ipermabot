@@ -1,4 +1,4 @@
-# 🔒 Política de Segurança — IMP-BOT
+# 🔒 Política de Segurança — Ipermabot
 
 ## Versões com atualizações
 
@@ -15,7 +15,7 @@ por canal privado.
 
 ### Email
 
-📧 **security@imp-bot.example**
+📧 **security@ipermabot.example**
 
 Substitua pelo email real do time antes de publicar.
 

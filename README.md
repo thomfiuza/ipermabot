@@ -1,10 +1,10 @@
-# 🤖 IMP-BOT — Robô Aplicador Autônomo de Impermeabilizante
+# 🤖 Ipermabot — Robô Aplicador Autônomo de Impermeabilizante
 
 > Repositório monorepo do projeto: **app de controle** + **firmware ESP32** +
 > **protocolo de comunicação** + **sistema de revisão contínua**.
 
 [![Status do Projeto](https://img.shields.io/badge/status-prot%C3%B3tipo-1F4E79?style=flat-square)](#)
-[![Versão](https://img.shields.io/badge/vers%C3%A3o-1.0.0-blue?style=flat-square)](CHANGELOG.md)
+[![Versão](https://img.shields.io/badge/vers%C3%A3o-1.0.1-blue?style=flat-square)](CHANGELOG.md)
 [![Plataforma](https://img.shields.io/badge/ESP32-Alexa-blue?style=flat-square)](firmware/)
 [![App](https://img.shields.io/badge/App-PWA%20%2B%20ES6-green?style=flat-square)](app/)
 
@@ -166,4 +166,4 @@ git bundle create projeto-robo-impermeabilizador.bundle --all
 > "A melhor engenharia não é a que faz milagre — é a que tem revisão contínua,
 > documentação honesta e falhas baratas de corrigir."
 
-— IMP-BOT Engineering Principles
+— Ipermabot Engineering Principles

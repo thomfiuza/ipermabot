@@ -29,7 +29,7 @@ export const PASSOS = [
     icone: '👋',
     titulo: 'Bem-vindo, operador!',
     corpo: () => `
-      <p>Eu sou seu assistente <strong>IMP-BOT</strong>.</p>
+      <p>Eu sou seu assistente <strong>Ipermabot</strong>.</p>
       <p>Vou te guiar em 8 passos simples para colocar o robô para trabalhar.</p>
       <p style="color:var(--texto-med);font-size:13px">
         Tempo estimado: <strong>3 minutos</strong>.

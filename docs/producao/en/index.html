@@ -1,0 +1,639 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Ipermabot v1.0.1 — Production Schematic</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  :root {
+    --blue-corp: #1F4E79; --blue-cla: #E8F0F8;
+    --gray-borda: #D5DBE3; --texto: #1F2937;
+    --text-med: #6B7280; --white: #FFFFFF;
+    --green: #2E7D32; --yellow: #F9A825; --red: #C62828;
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                 Helvetica, Arial, sans-serif;
+    max-width: 1080px; margin: 24px auto;
+    padding: 0 16px 80px; line-height: 1.55;
+    color: var(--texto); background: var(--white);
+  }
+  header {
+    background: var(--blue-corp); color: white;
+    padding: 24px 32px; border-radius: 8px;
+    margin-bottom: 32px;
+  }
+  header h1 { margin: 0 0 4px; font-size: 28px; }
+  header p  { margin: 0; opacity: 0.85; font-size: 14px; }
+  nav.toc {
+    background: var(--blue-cla); padding: 16px 24px;
+    border-left: 4px solid var(--blue-corp);
+    border-radius: 4px; margin: 24px 0;
+  }
+  nav.toc h2 { margin-top: 0; }
+  nav.toc ol { columns: 2; column-gap: 32px; padding-left: 24px; }
+  nav.toc ol li { margin: 4px 0; break-inside: avoid; }
+  nav.toc a { color: var(--blue-corp); text-decoration: none; }
+  nav.toc a:hover { text-decoration: underline; }
+  h2 {
+    margin-top: 48px; padding-bottom: 8px;
+    border-bottom: 2px solid var(--blue-corp);
+    color: var(--blue-corp);
+  }
+  h3 { margin-top: 24px; color: var(--texto); font-size: 17px; }
+  table {
+    width: 100%; border-collapse: collapse; margin: 12px 0;
+    font-size: 13px;
+  }
+  th, td {
+    padding: 6px 10px; border: 1px solid var(--gray-borda);
+    text-align: left;
+  }
+  th { background: var(--blue-cla); font-weight: 600; }
+  tr:nth-child(even) td { background: #FAFBFC; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  code, pre { font-family: Menlo, Consolas, monospace; font-size: 13px; }
+  code { background: #F3F4F6; padding: 1px 6px; border-radius: 3px; }
+  pre {
+    background: #F3F4F6; padding: 12px; border-radius: 4px;
+    overflow-x: auto;
+  }
+  pre code { background: none; padding: 0; }
+  blockquote {
+    margin: 12px 0; padding: 12px 20px;
+    border-left: 4px solid var(--yellow);
+    background: #FFF8E1;
+  }
+  .callout-atencao {
+    background: #FFEBEE; border-left: 4px solid var(--red);
+    padding: 12px 20px; margin: 12px 0; border-radius: 4px;
+  }
+  .callout-info {
+    background: var(--blue-cla); border-left: 4px solid var(--blue-corp);
+    padding: 12px 20px; margin: 12px 0; border-radius: 4px;
+  }
+  .imagens {
+    display: grid; grid-template-columns: 1fr; gap: 16px; margin: 24px 0;
+  }
+  .imagens figure {
+    margin: 0; background: var(--blue-cla);
+    border: 1px solid var(--gray-borda); border-radius: 6px;
+    padding: 12px;
+  }
+  .imagens figure img {
+    width: 100%; height: auto; border-radius: 4px;
+    border: 1px solid var(--gray-borda);
+    background: white;
+  }
+  .imagens figure figcaption {
+    margin-top: 8px; font-size: 13px; color: var(--text-med);
+    text-align: center;
+  }
+  .kpi-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 12px; margin: 16px 0 24px;
+  }
+  .kpi {
+    background: var(--blue-cla); padding: 16px;
+    border-radius: 6px; text-align: center;
+  }
+  .kpi .v { font-size: 22px; font-weight: 800; color: var(--blue-corp); }
+  .kpi .l { font-size: 11px; color: var(--text-med); text-transform: uppercase; }
+  @media (max-width: 700px) {
+    nav.toc ol { columns: 1; }
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    body { padding: 0 12px 60px; }
+  }
+  /* diagrama em svg */
+  .diagram {
+    text-align: center; margin: 16px 0;
+    background: white; border: 1px solid var(--gray-borda);
+    padding: 12px; border-radius: 6px;
+  }
+  .footer {
+    margin-top: 60px; padding: 16px 24px;
+    background: var(--blue-cla); border-radius: 6px;
+    text-align: center; font-size: 13px; color: var(--text-med);
+  }
+  ul, ol { padding-left: 22px; }
+  li { margin: 4px 0; }
+.lang-bar {
+  position: fixed; top: 12px; right: 12px;
+  background: white; border: 1.5px solid var(--cinza-borda);
+  border-radius: 999px; padding: 6px 10px;
+  display: flex; gap: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  z-index: 1000;
+}
+.lang-link {
+  padding: 4px 10px; border-radius: 999px;
+  text-decoration: none; font-size: 12px;
+  font-weight: 600; color: var(--texto-med);
+  transition: background 0.2s, color 0.2s;
+}
+.lang-link:hover { background: var(--azul-cla); color: var(--azul-corp); }
+.lang-link.active {
+  background: var(--azul-corp); color: white;
+}
+</style>
+</head>
+<body>
+
+<!-- language selector + home link -->
+<div class="lang-bar">
+  <a class="lang-link" href="../index.html" title="Back to language selector">🏠</a>
+  <a class="lang-link" href="../pt/index.html">🇧🇷 PT</a>
+  <a class="lang-link active" href="./index.html">🇺🇸 EN</a>
+</div>
+
+<header>
+  <h1>🤖 Ipermabot — Production Schematic</h1>
+  <p>Version 1.0.1 · Technical document for manufacturing, assembly, and certification</p>
+</header>
+
+<div class="kpi-grid">
+  <div class="kpi"><div class="v">1714</div><div class="l">R$ custo unidade</div></div>
+  <div class="kpi"><div class="v">3510</div><div class="l">R$ preço sugerido</div></div>
+  <div class="kpi"><div class="v">5.2</div><div class="l">kg massa</div></div>
+  <div class="kpi"><div class="v">126</div><div class="l">testes verdes</div></div>
+</div>
+
+<nav class="toc">
+<h2>SUMMARY</h2>
+<ol>
+  <li><a href="#visao">Overview</a></li>
+  <li><a href="#bom">Lista de materiais (BOM)</a></li>
+  <li><a href="#mecanica">3D View and Enclosure</a></li>
+  <li><a href="#esquematico">Electrical Schematic</a></li>
+  <li><a href="#pcb">Custom PCB</a></li>
+  <li><a href="#conflitos">Conflicts and Roadmap</a></li>
+  <li><a href="#aceitacao">Acceptance Criteria</a></li>
+  <li><a href="#bancada">Test Bench</a></li>
+  <li><a href="#custos">Detailed Costs</a></li>
+  <li><a href="#docs">Supplementary Documents</a></li>
+</ol>
+</nav>
+
+<h2 id="visao">1. Overview</h2>
+
+<p>O <strong>Ipermabot</strong> é um robô autônomo de laje (~30 × 40 cm, ~5 kg)
+that applies liquid waterproofing with ±2 cm precision, comandado por
+uma PWA via Wi-Fi local, powered by a 12V battery with integrated charger.</p>
+
+<h3>6-Layer Architecture</h3>
+
+<table>
+<tr><th>Camada</th><th>Function</th><th>Specification</th></tr>
+<tr><td>1. Sensores</td><td>Perceive environment</td><td>Ultrassom (4x), IMU (1x), Encoder (2x), Battery</td></tr>
+<tr><td>2. Controle</td><td>Decide movement, telemetry, events</td><td>ESP32-WROOM-32 + Arduino</td></tr>
+<tr><td>3. Atuadores</td><td>Execute action</td><td>2 motores DC + 1 solenoide (válvula)</td></tr>
+<tr><td>4. Energia</td><td>Supply and protect</td><td>Battery 12V LiFePO4 + chave + fusível + E-Stop</td></tr>
+<tr><td>5. Estrutura</td><td>Mechanical support</td><td>Stainless steel chassis, rubber wheels + caster</td></tr>
+<tr><td>6. Interface</td><td>Operador + cliente</td><td>PWA smartphone + botões físicos</td></tr>
+</table>
+
+<h3>Block Diagram</h3>
+
+<div class="diagram">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 460" width="100%" height="auto">
+  <style>
+    .box { fill: #FFFFFF; stroke: #1F4E79; stroke-width: 1.5; }
+    .label { font: 600 12px sans-serif; fill: #1F4E79; }
+    .sub { font: 10px sans-serif; fill: #1F2937; }
+    .wire { stroke: #6B7280; stroke-width: 1.2; fill: none; }
+    .wire-label { font: 10px monospace; fill: #6B7280; }
+  </style>
+
+  <!-- Energia -->
+  <rect class="box" x="20" y="20" width="680" height="70" />
+  <text class="label" x="36" y="40">⚡ POWER</text>
+  <text class="sub" x="36" y="58">Battery 12V LiFePO4 → Chave → Fuse 10A → E-STOP NC → 12V (motores) + 5V (Buck) + 3V3 (LDO)</text>
+
+  <!-- Controle -->
+  <rect class="box" x="20" y="120" width="280" height="280" />
+  <text class="label" x="36" y="140">🧠 CONTROL — ESP32</text>
+  <text class="sub" x="36" y="158">Wi-Fi + BLE · 240 MHz · 4 MB flash</text>
+
+  <rect class="box" x="36" y="170" width="100" height="40" />
+  <text class="sub" x="44" y="194">GPIO motors</text>
+
+  <rect class="box" x="148" y="170" width="130" height="40" />
+  <text class="sub" x="156" y="190">I2C 21/22 → BNO055</text>
+  <text class="sub" x="156" y="204">9-DoF sensor fusion</text>
+
+  <rect class="box" x="36" y="220" width="240" height="40" />
+  <text class="sub" x="44" y="244">Trig/Echo → 4× HC-SR04 (US sens)</text>
+
+  <rect class="box" x="36" y="270" width="110" height="40" />
+  <text class="sub" x="44" y="294">Encoder A/B</text>
+
+  <rect class="box" x="156" y="270" width="120" height="40" />
+  <text class="sub" x="164" y="294">Relay → Valve</text>
+
+  <rect class="box" x="36" y="320" width="240" height="50" />
+  <text class="sub" x="44" y="342">Botões: START (13) + E-STOP (32)</text>
+  <text class="sub" x="44" y="356">Green/Red LEDs · Buzzer</text>
+
+  <!-- Drivers -->
+  <rect class="box" x="320" y="120" width="180" height="120" />
+  <text class="label" x="336" y="140">💪 MOTOR RRIVERS</text>
+  <text class="sub" x="336" y="158">2× BTS7960 43A H-bridge</text>
+  <text class="sub" x="336" y="180">Motor E (25/26) ← RPM</text>
+  <text class="sub" x="336" y="198">Motor D (27/14) ← RPM</text>
+  <text class="sub" x="336" y="216">PWM 5kHz · 8 bits</text>
+
+  <!-- Motores -->
+  <rect class="box" x="320" y="260" width="180" height="70" />
+  <text class="label" x="336" y="280">🔧 MOTORS</text>
+  <text class="sub" x="336" y="300">2 × 12V 100W 300 RPM</text>
+  <text class="sub" x="336" y="318">+ encoder 360 pulsos/volta</text>
+
+  <!-- Smartphone -->
+  <rect class="box" x="520" y="120" width="180" height="160" />
+  <text class="label" x="536" y="140">📱 SMARTPHONE</text>
+  <text class="sub" x="536" y="160">Wi-Fi client</text>
+  <text class="sub" x="536" y="178">PWA (browser/app)</text>
+  <text class="sub" x="536" y="200">Assistant Mode + Telemetria</text>
+  <text class="sub" x="536" y="216">Planta visual + Relatório PDF</text>
+
+  <!-- Valve -->
+  <rect class="box" x="520" y="290" width="180" height="50" />
+  <text class="label" x="536" y="310">💧 SOLENOID VALVE</text>
+  <text class="sub" x="536" y="328">12V · 1/2" NPT</text>
+
+  <!-- Linhas -->
+  <line class="wire" x1="160" y1="190" x2="220" y2="190" />
+  <text class="wire-label" x="180" y="184">I2C</text>
+  <line class="wire" x1="260" y1="190" x2="320" y2="170" />
+  <text class="wire-label" x="270" y="174">PWM</text>
+  <line class="wire" x1="130" y1="300" x2="320" y2="280" />
+  <text class="wire-label" x="180" y="294">Encoder</text>
+  <line class="wire" x1="220" y1="290" x2="520" y2="310" />
+  <text class="wire-label" x="320" y="304">Relé 12V</text>
+  <line class="wire" x1="610" y1="200" x2="610" y2="240" />
+  <line class="wire" x1="610" y1="240" x2="160" y2="240" />
+  <text class="wire-label" x="370" y="232">Wi-Fi</text>
+</svg>
+</div>
+
+<h3>ESP32-WROOM-32 Pinout</h3>
+
+<table>
+<tr><th>Function</th><th>GPIO</th><th>Observação</th></tr>
+<tr><td>Motor E RPWM</td><td>25</td><td>PWM 5 kHz, 8 bits</td></tr>
+<tr><td>Motor E LPWM</td><td>26</td><td>PWM 5 kHz, 8 bits</td></tr>
+<tr><td>Motor D RPWM</td><td>27</td><td>PWM 5 kHz, 8 bits</td></tr>
+<tr><td>Motor D LPWM</td><td>14</td><td>PWM 5 kHz, 8 bits</td></tr>
+<tr><td>Encoder E</td><td>34</td><td>Input only, external 10kΩ pull-up</td></tr>
+<tr><td>Encoder D</td><td>35</td><td>Input only, external 10kΩ pull-up</td></tr>
+<tr><td>US Frente TRIG</td><td>18</td><td>HC-SR04</td></tr>
+<tr><td>US Frente ECHO</td><td>19</td><td>HC-SR04</td></tr>
+<tr><td>US Direita TRIG</td><td>21</td><td>HC-SR04 <span style="background:#FFEBEE">⚠️ conflict with I2C</span></td></tr>
+<tr><td>US Direita ECHO</td><td>22</td><td>HC-SR04 <span style="background:#FFEBEE">⚠️ conflict with I2C</span></td></tr>
+<tr><td>US Esquerda TRIG</td><td>23</td><td>HC-SR04</td></tr>
+<tr><td>US Esquerda ECHO</td><td>36</td><td>HC-SR04 (input-only)</td></tr>
+<tr><td>US Solo (chão) TRIG</td><td>33</td><td>HC-SR04 (pointing downward)</td></tr>
+<tr><td>US Solo (chão) ECHO</td><td>39</td><td>HC-SR04</td></tr>
+<tr><td><strong>I2C SDA (IMU)</strong></td><td>21</td><td>shares pin with US Right TRIG</td></tr>
+<tr><td><strong>I2C SCL (IMU)</strong></td><td>22</td><td>shares pin with US Right ECHO</td></tr>
+<tr><td>Relé Valve</td><td>4</td><td>Logic output 3V3 → 5V relay driver</td></tr>
+<tr><td>LED verde</td><td>16</td><td>Digital output</td></tr>
+<tr><td>LED vermelho</td><td>17</td><td>Digital output</td></tr>
+<tr><td>Buzzer</td><td>5</td><td>Digital output + transistor driver</td></tr>
+<tr><td>Botão START</td><td>13</td><td>INPUT_PULLUP</td></tr>
+<tr><td>Botão E-STOP</td><td>32</td><td>INPUT_PULLUP, NA (normalmente fechado)</td></tr>
+</table>
+
+<div class="callout-atencao">
+<strong>⚠️ I2C/US-Right pin conflict</strong>: V1 firmware uses 21/22
+para I2C com BNO055. V1.1 must move US Right to another pair
+(2/15 ou usar I2C multiplexer TCA9548A).
+</div>
+
+<h2 id="bom">2. Bill of Materials (BOM)</h2>
+<p>Costs baseados em mercado BR (R$). Versão R1 — protótipo homologável.</p>
+
+<h3>2.1 Electronic Components</h3>
+<table>
+<tr><th>#</th><th>Component</th><th>Qtd</th><th>Specification</th><th class="num">Unit. R$</th><th class="num">Total R$</th></tr>
+<tr><td>1</td><td>ESP32-WROOM-32</td><td>1</td><td>Wi-Fi+BLE, 4 MB flash, 38 pinos</td><td class="num">28,00</td><td class="num">28,00</td></tr>
+<tr><td>2</td><td>BNO055 breakout</td><td>1</td><td>9-DoF sensor fusion (I2C)</td><td class="num">95,00</td><td class="num">95,00</td></tr>
+<tr><td>3</td><td>BTS7960 H-bridge</td><td>2</td><td>43 A peak, motor driver</td><td class="num">45,00</td><td class="num">90,00</td></tr>
+<tr><td>4</td><td>HC-SR04 ultrassônico</td><td>4</td><td>Range 2–400 cm</td><td class="num">9,50</td><td class="num">38,00</td></tr>
+<tr><td>5</td><td>Módulo relé 5V</td><td>1</td><td>1 channel, optocoupled, 10 A</td><td class="num">8,00</td><td class="num">8,00</td></tr>
+<tr><td>6</td><td>Encoder óptico</td><td>2</td><td>360 pulses/rev, 5V</td><td class="num">12,00</td><td class="num">24,00</td></tr>
+<tr><td>7</td><td>LED 5mm verde</td><td>1</td><td>High-bright, 3V3</td><td class="num">0,50</td><td class="num">0,50</td></tr>
+<tr><td>8</td><td>LED 5mm vermelho</td><td>1</td><td>High-bright, 3V3</td><td class="num">0,50</td><td class="num">0,50</td></tr>
+<tr><td>9</td><td>Buzzer ativo</td><td>1</td><td>5V, 85 dB</td><td class="num">6,00</td><td class="num">6,00</td></tr>
+<tr><td>10</td><td>Botão cogumelo E-Stop</td><td>1</td><td>NC, mechanical latch</td><td class="num">35,00</td><td class="num">35,00</td></tr>
+<tr><td>11</td><td>Botão momentâneo START</td><td>1</td><td>NO, panel</td><td class="num">8,00</td><td class="num">8,00</td></tr>
+<tr><td>12</td><td>Resistor 10 kΩ 1/4 W</td><td>2</td><td>Pull-up encoders</td><td class="num">0,10</td><td class="num">0,20</td></tr>
+<tr><td>13</td><td>Resistor 330 Ω 1/4 W</td><td>2</td><td>Limitação LEDs</td><td class="num">0,10</td><td class="num">0,20</td></tr>
+<tr><td>14</td><td>Capacitor 1000 µF</td><td>1</td><td>Filtragem 5V</td><td class="num">2,00</td><td class="num">2,00</td></tr>
+<tr><td>15</td><td>Capacitor 100 nF</td><td>4</td><td>Decoupling</td><td class="num">0,30</td><td class="num">1,20</td></tr>
+<tr><td>16</td><td>Diodo 1N4007</td><td>2</td><td>Motor flyback</td><td class="num">0,30</td><td class="num">0,60</td></tr>
+<tr><td>17</td><td>Fuse 10 A 32V</td><td>1</td><td>Automotive blade</td><td class="num">3,00</td><td class="num">3,00</td></tr>
+<tr><td>18</td><td>Porta-fusível</td><td>1</td><td>Panel</td><td class="num">2,50</td><td class="num">2,50</td></tr>
+<tr><td>19</td><td>Jack DC 2.1mm</td><td>1</td><td>Panel</td><td class="num">3,00</td><td class="num">3,00</td></tr>
+<tr><td>20</td><td>Borneira 2-vias 5mm</td><td>6</td><td>Bornes de força</td><td class="num">1,50</td><td class="num">9,00</td></tr>
+<tr><td>21</td><td>Buck DC-DC 12→5V</td><td>1</td><td>3A (solenóide)</td><td class="num">12,00</td><td class="num">12,00</td></tr>
+<tr><td>22</td><td>Regulador LDO 3V3</td><td>1</td><td>LM1117 ESP32 supply</td><td class="num">3,00</td><td class="num">3,00</td></tr>
+<tr><td>23</td><td>Cabo silicone 16 AWG</td><td>2 m</td><td>Battery connection</td><td class="num">4,00</td><td class="num">4,00</td></tr>
+<tr><td>24</td><td>Jumper wire Dupont</td><td>40</td><td>20 cm M-F</td><td class="num">6,00</td><td class="num">6,00</td></tr>
+<tr><th colspan="5">Electronic Subtotal</th><th colspan="2" class="num"><strong>380,20</strong></th></tr>
+</table>
+
+<h3>2.2 Mechanics and Battery</h3>
+<table>
+<tr><th>#</th><th>Component</th><th>Qtd</th><th>Specification</th><th class="num">Unit. R$</th><th class="num">Total R$</th></tr>
+<tr><td>25</td><td>Roda borracha 150mm</td><td>2</td><td>Eixo 12 mm, cubo + chave</td><td class="num">38,00</td><td class="num">76,00</td></tr>
+<tr><td>26</td><td>Roda caster 50mm</td><td>1</td><td>Swivel, bracket</td><td class="num">12,00</td><td class="num">12,00</td></tr>
+<tr><td>27</td><td>Motor DC 12V com encoder</td><td>2</td><td>100 W, 300 RPM</td><td class="num">88,00</td><td class="num">176,00</td></tr>
+<tr><td>28</td><td>Motor Bracket L</td><td>2</td><td>Alumínio 5 mm</td><td class="num">6,00</td><td class="num">12,00</td></tr>
+<tr><td>29</td><td>Stainless steel chassis 304</td><td>1</td><td>400 × 300 × 3 mm customizado</td><td class="num">95,00</td><td class="num">95,00</td></tr>
+<tr><td>30</td><td>Roller Bracket</td><td>1</td><td>Alumínio + eixo M8</td><td class="num">18,00</td><td class="num">18,00</td></tr>
+<tr><td>31</td><td>Rolo pintura 23 cm</td><td>1</td><td>Short-pile lamb wool</td><td class="num">12,00</td><td class="num">12,00</td></tr>
+<tr><td>32</td><td>Valve solenoide 12V</td><td>1</td><td>1/2" NPT, latão, NF</td><td class="num">85,00</td><td class="num">85,00</td></tr>
+<tr><td>33</td><td>Mangueira silicone</td><td>1 m</td><td>8×10 mm</td><td class="num">9,00</td><td class="num">9,00</td></tr>
+<tr><td>34</td><td>Conexão galão</td><td>1</td><td>Rosca + tampa</td><td class="num">11,00</td><td class="num">11,00</td></tr>
+<tr><td>35</td><td>Galão reservatório 5L</td><td>1</td><td>Wide-mouth HDPE</td><td class="num">32,00</td><td class="num">32,00</td></tr>
+<tr><td>36</td><td>Battery LiFePO4 12V 30Ah</td><td>1</td><td>BMS integrado 30A</td><td class="num">580,00</td><td class="num">580,00</td></tr>
+<tr><td>37</td><td>Carregador LiFePO4 14.6V</td><td>1</td><td>5A balanced</td><td class="num">145,00</td><td class="num">145,00</td></tr>
+<tr><td>38</td><td>Parafusos M3/M4/M5</td><td>60</td><td>Various stainless steel</td><td class="num">18,00</td><td class="num">18,00</td></tr>
+<tr><td>39</td><td>Abraçadeiras nylon</td><td>20</td><td>Misc</td><td class="num">3,00</td><td class="num">3,00</td></tr>
+<tr><td>40</td><td>Fita isolante + termo</td><td>2</td><td>Misc</td><td class="num">5,00</td><td class="num">5,00</td></tr>
+<tr><td>41</td><td>Adesivo estrutural</td><td>1</td><td>50 ml epoxy</td><td class="num">12,00</td><td class="num">12,00</td></tr>
+<tr><th colspan="5">Mechanical/Battery Subtotal</th><th colspan="2" class="num"><strong>1301,00</strong></th></tr>
+</table>
+
+<h3>Total Cost per Unit</h3>
+
+<table>
+<tr><th>Categoria</th><th class="num">R$</th></tr>
+<tr><td>Electronics</td><td class="num">380,20</td></tr>
+<tr><td>Mecânica + bateria</td><td class="num">1301,00</td></tr>
+<tr><td>PCB (rateio por 5 unid)</td><td class="num">33,00</td></tr>
+<tr><th>TOTAL per prototype</th><th class="num"><strong>1714,20</strong></th></tr>
+</table>
+
+<div class="callout-info">
+<strong>Comparison:</strong> Spraybot/Coaterbot (SprayWorks, EUA) ≈ USD 12.000
+(R$ 60.000). Ipermabot R1 entrega 80% do valor por 1/10 do preço.
+</div>
+
+<h2 id="mecanica">3. 3D View and Enclosure</h2>
+
+<div class="imagens">
+<figure>
+  <img src="assets/robot_3d_render.png" alt="Renderização 3D do robô Ipermabot">
+  <figcaption>Vista 3D isométrica do Ipermabot (stainless steel chassis, 2 motors with 150mm wheels, reservatório azul, botão de emergência cogumelo no topo).</figcaption>
+</figure>
+
+<figure>
+  <img src="assets/gabinete_explosao.png" alt="Vista explodida do chassi">
+  <figcaption>Exploded view of the chassis showing the layers: battery, motors, PCB, reservoir.</figcaption>
+</figure>
+</div>
+
+<p><strong>Final external dimensions</strong>: 400 mm comprimento × 300 mm largura × 280 mm altura<br>
+<strong>Total mass with battery</strong>: 5,2 kg (sem produto)<br>
+<strong>Reservoir capacity</strong>: 5 L (rende ~30 m²/demão)</p>
+
+<h3>3.1 Exploded View (descriptive)</h3>
+
+<pre><code>    [3] Tampa superior (PS 3mm) ← botão E-Stop + START
+          │
+    [2] Panel frontal — display LED, LEDs status
+          │
+    [4] PCB controladora (fixada por 4 parafusos M3)
+          │
+    [1] Stainless steel chassis
+          │
+   ┌──────┴──────┐
+[Motor E]            [Motor D]
+   ↓                     ↓
+[Roda E 150mm]       [Roda D 150mm]
+
+[Reservatório 5L] em cima dos motores, fixado por abraçadeiras.
+[Caster 50mm] embaixo do centro para apoio.
+[Rolo pintura 23cm] no chassi frontal (rente ao chão).</code></pre>
+
+<h3>3.2 Mechanical Parts List (manufacturing)</h3>
+
+<table>
+<tr><th>Part</th><th>Material</th><th>Dimensions</th><th>Qtd</th><th>Process</th></tr>
+<tr><td>Main chassis</td><td>Stainless steel 304 3mm</td><td>400×300 mm c/ dobra 90° 25 mm</td><td>1</td><td>Laser cut + CNC</td></tr>
+<tr><td>Tampa superior</td><td>PS 3mm</td><td>350×250 mm c/ furos para botões</td><td>1</td><td>Laser cut</td></tr>
+<tr><td>Motor Bracket</td><td>Aluminum 5mm</td><td>80×40 mm c/ 4 furos M4</td><td>2</td><td>Laser cut</td></tr>
+<tr><td>E-Stop Bracket</td><td>PETG 3D printed</td><td>Custom-made</td><td>1</td><td>3D printing</td></tr>
+<tr><td>Floor Sensor Bracket</td><td>Stainless steel 2mm</td><td>40×30 mm c/ furo M16</td><td>1</td><td>Laser cut</td></tr>
+<tr><td>Tank Bracket</td><td>PETG 3D printed</td><td>Internal diameter 165 mm</td><td>1</td><td>3D printing</td></tr>
+</table>
+
+<h2 id="esquematico">4. Electrical Schematic</h2>
+
+<div class="imagens">
+<figure>
+  <img src="assets/wiring_diagram.png" alt="Electrical Schematic">
+  <figcaption>Complete electrical diagram — ESP32 ↔ motors, IMU, ultrasonic, relay, sensors.</figcaption>
+</figure>
+</div>
+
+<h3>4.1 Power</h3>
+<div class="diagram">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 100" width="100%">
+  <style>
+    .b { fill: white; stroke: #1F4E79; stroke-width: 1.5; }
+    .l { font: 600 12px sans-serif; fill: #1F4E79; }
+    .s { font: 10px sans-serif; fill: #1F2937; }
+    .w { stroke: #6B7280; stroke-width: 1.5; fill: none; }
+  </style>
+  <rect class="b" x="20" y="30" width="80" height="40" />
+  <text class="l" x="30" y="50">Battery</text>
+  <text class="s" x="30" y="64">12V 30Ah</text>
+  <rect class="b" x="130" y="30" width="50" height="40" />
+  <text class="s" x="138" y="50">Fuse</text>
+  <text class="s" x="146" y="62">10A</text>
+  <rect class="b" x="210" y="30" width="60" height="40" />
+  <text class="s" x="216" y="50">E-STOP</text>
+  <text class="s" x="216" y="62">NC</text>
+  <rect class="b" x="300" y="30" width="80" height="40" />
+  <text class="s" x="312" y="50">Buck</text>
+  <text class="s" x="312" y="62">12→5V 3A</text>
+  <rect class="b" x="410" y="30" width="80" height="40" />
+  <text class="s" x="420" y="50">LDO</text>
+  <text class="s" x="420" y="62">+3V3</text>
+  <rect class="b" x="520" y="30" width="180" height="40" />
+  <text class="s" x="528" y="50">Motores DC + Valve + IMU + Esp32</text>
+  <line class="w" x1="100" y1="50" x2="130" y2="50" />
+  <line class="w" x1="180" y1="50" x2="210" y2="50" />
+  <line class="w" x1="270" y1="50" x2="300" y2="50" />
+  <line class="w" x1="380" y1="50" x2="410" y2="50" />
+  <line class="w" x1="490" y1="50" x2="520" y2="50" />
+</svg>
+</div>
+
+<h3>4.2 Voltage/Current Table</h3>
+<table>
+<tr><th>Bus</th><th>Voltage</th><th>Typical current</th><th>Peak current</th><th>Protection</th></tr>
+<tr><td>+12V direto</td><td>12V DC</td><td>2,5 A</td><td>8 A</td><td>Fuse 10A</td></tr>
+<tr><td>+5V (Buck)</td><td>5,0 V</td><td>0,6 A</td><td>1,5 A</td><td>Resettable PTC</td></tr>
+<tr><td>+3V3 (LDO)</td><td>3,3 V</td><td>0,25 A</td><td>0,5 A</td><td>No protection</td></tr>
+</table>
+
+<h2 id="pcb">5. Custom PCB</h2>
+
+<div class="imagens">
+<figure>
+  <img src="assets/pcb_top_view.png" alt="Vista superior da PCB">
+  <figcaption>Vista superior da Custom PCB (100×80 mm, 2 layers, FR4).</figcaption>
+</figure>
+</div>
+
+<h3>5.1 PCB Topology</h3>
+
+<ul>
+  <li><strong>Size</strong>: 100 × 80 mm, 2 layers, 1.6 mm FR4, HASL lead-free</li>
+  <li><strong>Top side</strong>: main components (ESP32, BNO055, conectores)</li>
+  <li><strong>Bottom side</strong>: power traces (12V e GND), regulators</li>
+</ul>
+
+<h3>5.2 Edge Connectors / Pinout</h3>
+
+<table>
+<tr><th>ID</th><th>Function</th><th>Pinout</th></tr>
+<tr><td>J1</td><td>POWER (5mm pitch)</td><td>BAT+, GND</td></tr>
+<tr><td>J2</td><td>MOTOR L (3.5mm)</td><td>RPWM, LPWM, GND, +12V</td></tr>
+<tr><td>J3</td><td>MOTOR R (mesmo J2)</td><td>RPWM, LPWM, GND, +12V</td></tr>
+<tr><td>J4</td><td>IMU (2.54mm)</td><td>+3V3, GND, SDA, SCL</td></tr>
+<tr><td>J5</td><td>ENCODER (6 vias)</td><td>+5V, GND, A esq, A dir, GND, +5V</td></tr>
+<tr><td>J6</td><td>ULTRASONIC (10 vias)</td><td>2× (VCC, GND, TRIG, ECHO) + extras</td></tr>
+<tr><td>J7</td><td>VALVE (5mm)</td><td>SINAL, GND</td></tr>
+<tr><td>J8</td><td>LEDs/BUZZER (4 vias)</td><td>LEDG, LEDR, BUZZ, GND</td></tr>
+<tr><td>J9</td><td>BUTTONS (3 vias)</td><td>BTN_START, BTN_ESTOP, GND</td></tr>
+<tr><td>J10</td><td>USB Micro-B</td><td>Para flash + bancada</td></tr>
+</table>
+
+<h2 id="conflitos">6. Pin Conflicts and V1.1 Roadmap</h2>
+
+<table>
+<tr><th>ID</th><th>Conflict</th><th>Mitigation</th><th>Cost</th></tr>
+<tr><td>PCN-001</td><td>GPIO 21/22 (I2C IMU) vs US-Direita</td><td>Move I2C to GPIO 17/5 or move US Right</td><td>1 PCB jumper</td></tr>
+<tr><td>PCN-002</td><td>TRIG US-Solo no GPIO 33 (boot)</td><td>Avoid pulse during flash</td><td>0</td></tr>
+<tr><td>PCN-003</td><td>Move US to GPIOs without input-only restriction</td><td>Move US Left/Down TRIG to GPIO 2/15</td><td>1 jumper</td></tr>
+<tr><td>PCN-004</td><td>Relé único OK? Solenóide 0,5 A</td><td>Check datasheet</td><td>0</td></tr>
+</table>
+
+<h3>V1.1 Roadmap (planned)</h3>
+<ul>
+  <li>☐ Resolver conflito I2C / ultrassom (PCN-001)</li>
+  <li>☐ Add HMAC authentication to WebSocket commands</li>
+  <li>☐ Implementar OTA (Over-The-Air) do firmware via Wi-Fi</li>
+  <li>☐ Add current sensor on the 12V bus</li>
+  <li>☐ Custom PCB v2 eliminando conflitos do V1</li>
+  <li>☐ Support 18L tank</li>
+</ul>
+
+<h2 id="aceitacao">7. Acceptance Criteria e ensaios</h2>
+
+<h3>7.1 Electrical Tests</h3>
+<ul>
+  <li>☐ Continuidade de GND (multímetro)</li>
+  <li>☐ Resistência de isolação ≥ 1 MΩ (megôhmetro 500V)</li>
+  <li>☐ E-Stop: cut 12V in ≤ 100 ms</li>
+  <li>☐ Reverse polarity: TVS/PTC prevents damage</li>
+  <li>☐ Voltage bateria mínima: ≥ 10,8V → corte (BMS)</li>
+</ul>
+
+<h3>7.2 Functional Tests</h3>
+<ul>
+  <li>☐ Loop de testes (review.mjs) — 4/4 verde</li>
+  <li>☐ Boot in ≤ 8 s</li>
+  <li>☐ Telemetria 1 Hz ± 0.1 Hz por 5 min</li>
+  <li>☐ Simulator mode: 30 min without disconnection</li>
+  <li>☐ Conexão Wi-Fi client em ≤ 15 s</li>
+  <li>☐ E-Stop: parar motores + válvula em ≤ 200 ms</li>
+</ul>
+
+<h3>7.3 Field Tests</h3>
+<ul>
+  <li>☐ Pilot slab 5 m² in controlled environment</li>
+  <li>☐ Laje real 100 m² (cliente) — 5 demãos com autonomia</li>
+</ul>
+
+<h3>7.4 Environmental Tests</h3>
+<ul>
+  <li>☐ Operating temperature: 0 – 50 °C</li>
+  <li>☐ Relative humidity: 30 – 90%</li>
+  <li>☐ Vibração: ≤ 2.5 m/s² RMS contínuo</li>
+  <li>☐ IP54: poeira + jato d'água</li>
+</ul>
+
+<h3>7.5 Safety Tests</h3>
+<ul>
+  <li>NR-10 (eletricidade): verificação por profissional habilitado</li>
+  <li>NR-12 (máquinas): botão E-Stop em local acessível, categoria 3</li>
+  <li>LGPD: app does not collect personal data without consent</li>
+</ul>
+
+<h2 id="bancada">8. Test Bench (diagrama)</h2>
+
+<div class="callout-info">
+<p>Em projeto CAD detalhado, este diagrama mostra a bancada de teste. Para
+a versão texto: a 2×2 m area with white floor, battery, multimeter,
+4-channel oscilloscope, smartphone connected to the robot's AP.</p>
+</div>
+
+<h2 id="custos">9. Detailed Costs e tempo de fabricação</h2>
+
+<h3>Time de fabricação (1 unidade)</h3>
+
+<table>
+<tr><th>Step</th><th>Time</th><th>Equipment</th></tr>
+<tr><td>Laser cut chassi + tampas</td><td>30 min</td><td>80W laser cutter</td></tr>
+<tr><td>CNC bending</td><td>15 min</td><td>Manual bender</td></tr>
+<tr><td>Welding brackets</td><td>30 min</td><td>MIG/MAG</td></tr>
+<tr><td>3D printing suportes</td><td>2 h</td><td>PETG printer</td></tr>
+<tr><td>PCB assembly</td><td>1 h</td><td>Ferro + stencil</td></tr>
+<tr><td>Component assembly</td><td>1,5 h</td><td>Screwdrivers</td></tr>
+<tr><td>Wiring</td><td>1,5 h</td><td>Pliers, soldering iron</td></tr>
+<tr><td>Final chassis assembly</td><td>1 h</td><td>—</td></tr>
+<tr><td>Programming and testing</td><td>2 h</td><td>USB, serial</td></tr>
+<tr><th>Total</th><th class="num"><strong>~ 10h</strong></th><th></th></tr>
+</table>
+
+<h3>Preço de venda sugerido (1° lote, 5 unidades)</h3>
+<table>
+<tr><th>Item</th><th class="num">R$</th></tr>
+<tr><td>Cost-materiais</td><td class="num">1.714,20</td></tr>
+<tr><td>Cost-MO (eletrônico + mecânico)</td><td class="num">720,00</td></tr>
+<tr><td>Setup / initial configuration</td><td class="num">200,00</td></tr>
+<tr><td>Margem (20%)</td><td class="num">526,84</td></tr>
+<tr><td>Impostos (12%)</td><td class="num">378,73</td></tr>
+<tr><th>Price to client</th><th class="num"><strong>3.539,77</strong></th></tr>
+</table>
+
+<div class="callout-info">
+<strong>ROI:</strong> serviço manual custa R$ 35-50/m². Ipermabot recovers
+investment in <strong>500–700 m²</strong> de obra.
+</div>
+
+<h2 id="docs">10. Supplementary Documents</h2>
+
+<ul>
+  <li>Esquemático elétrico (Kicad) → <code>assets/esquematico.kicad_pcb</code></li>
+  <li>Modelo 3D (STEP) → <code>assets/impbot_v1.step</code></li>
+  <li>ANATEL document → <code>docs/regulatorio/ANATEL.md</code> (TODO V1.1)</li>
+  <li>User manual → <code>MANUAL.md</code> (TODO V1.1)</li>
+  <li>Calibration procedure → <code>CALIBRACAO.md</code> (TODO V1.1)</li>
+</ul>
+
+<div class="footer">
+  <strong>Documento V1 (protótipo homologável).</strong><br>
+  Atualizar para V1.1 assim que conflitos PCN-001..004 forem resolvidos
+  and PCB V2 is manufactured.<br>
+  Gerado automaticamente como parte do release v1.0.1 do Ipermabot.
+</div>
+
+</body>
+</html>

@@ -1,4 +1,4 @@
-# 🚀 Guia de Deploy & Operação — IMP-BOT
+# 🚀 Guia de Deploy & Operação — Ipermabot
 
 Este documento cobre tudo que você precisa para colocar a versão em uso:
 deployar a app, flashear o firmware, testar e manter.
@@ -111,7 +111,7 @@ scp dist/impbot-v1.0.0.* servidor:/var/www/impbot/
 cat > /etc/nginx/sites-available/impbot <<'NGINX'
 server {
   listen 443 ssl http2;
-  server_name imp-bot.exemplo.com;
+  server_name ipermabot.exemplo.com;
   root /var/www/impbot/impbot-v1.0.0;
   index index.html;
 
@@ -131,8 +131,8 @@ server {
   # SPA fallback (opcional)
   location / { try_files $uri $uri/ /index.html; }
 
-  ssl_certificate /etc/letsencrypt/live/imp-bot.exemplo.com/fullchain.pem;
-  ssl_certificate_key /etc/letsencrypt/live/imp-bot.exemplo.com/privkey.pem;
+  ssl_certificate /etc/letsencrypt/live/ipermabot.exemplo.com/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/ipermabot.exemplo.com/privkey.pem;
 }
 NGINX
 sudo ln -s /etc/nginx/sites-available/impbot /etc/nginx/sites-enabled/
@@ -308,7 +308,7 @@ Conecte em `ws://IP_DO_ROBO/ws` e envie:
 
 Resposta:
 ```json
-{"id":1,"ok":true,"data":{"modelo":"IMP-BOT-V1","versao_fw":"1.0.0","ip":"192.168.4.1"}}
+{"id":1,"ok":true,"data":{"modelo":"Ipermabot-V1","versao_fw":"1.0.1 (0x010001)","ip":"192.168.4.1"}}
 ```
 
 ---
@@ -335,7 +335,7 @@ sha256sum -c impbot-v1.0.0.zip.sha256
 
 | Canal | Uso |
 |---|---|
-| 📧 security@imp-bot.example | Vulnerabilidades |
+| 📧 security@ipermabot.example | Vulnerabilidades |
 | 🐛 Issues GitHub | Bugs públicos |
 | 💬 Discussions | Dúvidas |
 | 📖 Documentação | `docs/` |

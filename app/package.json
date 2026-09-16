@@ -1,5 +1,5 @@
 {
-  "name": "impbot-app",
+  "name": "ipermabot-app",
   "version": "1.0.1",
   "description": "PWA de controle do robô aplicador de impermeabilizante",
   "type": "module",
@@ -21,7 +21,7 @@
     "construction",
     "esp32"
   ],
-  "author": "IMP-BOT Team",
+  "author": "Ipermabot Team",
   "license": "UNLICENSED",
   "devDependencies": {}
 }

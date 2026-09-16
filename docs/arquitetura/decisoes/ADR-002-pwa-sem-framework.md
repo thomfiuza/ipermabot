@@ -2,7 +2,7 @@
 
 > **Status:** ✅ Aceita
 > **Data:** 2026-09-16
-> **Decisor:** IMP-BOT Dev
+> **Decisor:** Ipermabot Dev
 
 ## Contexto
 
