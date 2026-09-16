@@ -275,6 +275,14 @@ _('imu_falha severity warn, sensor ausente', () => {
   _eq(L.logs[0].tipo, 'warn');
 });
 
+_('vibracao_excessiva severity erro, alerta mecânico', () => {
+  const L = _simularLog();
+  tratarEvento({ tipo: 'vibracao_excessiva', descricao: 'RMS=2.8' }, L.fn, {});
+  _eq(L.logs.length, 1);
+  _eq(L.logs[0].tipo, 'erro');
+  _eq(L.logs[0].titulo, 'Vibração mecânica excessiva');
+});
+
 /* ============================================================================
    TELEMETRIA IMU
    ============================================================================ */

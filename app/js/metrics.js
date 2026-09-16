@@ -10,6 +10,7 @@
  */
 
 import { graficoLinha, graficoRosca, graficoBarras } from './charts.js';
+import { detectarEsgotamento, produtoById } from './produtos.js';
 
 /** Limites */
 const MAX_SNAPSHOTS = 720;   // 12 horas @ 1 amostra/min
@@ -215,6 +216,16 @@ class Metricas {
       '#1565C0',
       Math.max(...intervals, 1)
     );
+  }
+
+  /**
+   * Diferencial #5 — Detecta produto esgotado (delta m² vs. consumo esperado).
+   * Wrapper da função pura de produtos.js com memoização por sigilo.
+   */
+  alertaEsgotamentoProduto(estado, config) {
+    const produto = produtoById(config.produto_id);
+    if (!produto) return { nivel: 'ok', motivo: 'Nenhum produto selecionado' };
+    return detectarEsgotamento(this.snapshots, produto);
   }
 
   /**
