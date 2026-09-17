@@ -1,31 +1,25 @@
-name: Revisão contínua
+name: Revisao continua
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main]
   pull_request:
-    branches: [main, develop]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   review:
-    name: Revisão de código
+    name: Revisao de codigo
     runs-on: ubuntu-latest
-
     steps:
-      - name: 📥 Baixar código
+      - name: Baixar codigo
         uses: actions/checkout@v4
-
-      - name: 🔧 Instalar Node 18
+      - name: Setup Node.js 20
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
-
-      - name: 🧪 Rodar revisão contínua (tests + lint + protocol + firmware)
+          node-version: '20'
+      - name: Rodar revisao
         run: node tools/scripts/review.mjs
-
-      - name: ⚠️ Falha detectada — exibir log
-        if: failure()
-        run: |
-          echo "❌ Falha na revisão. Verifique a saída acima."
-          echo "Para rodar localmente: cd projeto-robo-impermeabilizador && node tools/scripts/review.mjs"
