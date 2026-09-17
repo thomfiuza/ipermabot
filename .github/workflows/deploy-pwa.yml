@@ -22,24 +22,17 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      - name: 📥 Baixar código
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: 🔧 Setup Pages
+      - name: Setup Pages
         uses: actions/configure-pages@v5
 
-      - name: 📂 Preparar artefato
-        run: |
-          mkdir -p dist/app
-          cp -r app/* dist/app/
-          cp docs/arquitetura/MVP_APP.md dist/app/README.html
-          echo "<!DOCTYPE html><meta http-equiv=refresh content='0;url=app/index.html'>" > dist/index.html
-
-      - name: 📤 Upload artifact
+      - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: 'app'
 
-      - name: 🚀 Deploy
+      - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
