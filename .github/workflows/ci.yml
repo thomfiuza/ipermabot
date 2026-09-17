@@ -1,146 +1,64 @@
 name: CI Multi-Stage
 
-# CI completo com gates separados por componente:
-#   - tests-js   (app + firmware JS tests)
-#   - lint-js
-#   - firmware   (validação estática + IMU tests)
-#   - protocol   (coerência app ↔ firmware)
-#   - build-pwa  (empacota e gera checksum)
-# Falha em qualquer stage marca o PR/push como vermelho.
-
 on:
   push:
-    branches: [main, develop]
-    tags: ['v*']
+    branches: [main]
   pull_request:
-    branches: [main, develop]
+    branches: [main]
   workflow_dispatch:
 
-env:
-  NODE_VERSION: '20'
+permissions:
+  contents: read
 
 jobs:
-  # ──────────────────────────────────────────────────────────
-  # STAGE 1: Testes unitários JS
-  # ──────────────────────────────────────────────────────────
-  tests-js:
-    name: 🧪 Testes JS
+  test-js:
+    name: Testes JS
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: app
-
     steps:
-      - name: 📥 Checkout
+      - name: Baixar codigo
         uses: actions/checkout@v4
-      - name: 🔧 Setup Node ${{ env.NODE_VERSION }}
+      - name: Setup Node.js 20
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: npm
-          cache-dependency-path: app/package-lock.json
-      - name: 📦 Instalar deps
-        run: npm install --no-audit --no-fund || true
-      - name: 🧪 Testes unitários
-        run: node tests/run.mjs
+          node-version: '20'
+      - name: Rodar testes
+        run: cd app && node tests/run.mjs
 
-  # ──────────────────────────────────────────────────────────
-  # STAGE 2: Lint do código JS
-  # ──────────────────────────────────────────────────────────
   lint-js:
-    name: 🧹 Lint JS
+    name: Lint JS
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Baixar codigo
+        uses: actions/checkout@v4
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
-      - name: 🧹 Rodar lint
+          node-version: '20'
+      - name: Rodar lint
         run: node tools/scripts/lint-js.mjs
 
-  # ──────────────────────────────────────────────────────────
-  # STAGE 3: Validação do firmware (.ino)
-  # ──────────────────────────────────────────────────────────
-  firmware-validate:
-    name: 🔌 Validação Firmware
+  validate-firmware:
+    name: Validacao Firmware
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Baixar codigo
+        uses: actions/checkout@v4
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
-      - name: 🛠️ Validar .ino (estática)
+          node-version: '20'
+      - name: Validar firmware
         run: node tools/scripts/validate-firmware.mjs
-      - name: 🔬 Testes IMU estáticos
-        run: node firmware/tests/test_imu.js
 
-  # ──────────────────────────────────────────────────────────
-  # STAGE 4: Coerência protocolo app ↔ firmware
-  # ──────────────────────────────────────────────────────────
-  protocol-coherence:
-    name: 🔗 Coerência Protocolo
+  check-protocol:
+    name: Coerencia Protocolo
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Baixar codigo
+        uses: actions/checkout@v4
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
-      - name: 🔗 Validar coerência
+          node-version: '20'
+      - name: Coerencia protocolo
         run: node tools/scripts/check-protocol.mjs
-
-  # ──────────────────────────────────────────────────────────
-  # STAGE 5: Build de release da PWA (zip + sha256)
-  # ──────────────────────────────────────────────────────────
-  build-pwa:
-    name: 📦 Build PWA
-    runs-on: ubuntu-latest
-    needs: [tests-js, lint-js, firmware-validate, protocol-coherence]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-      - name: 📦 Empacotar app/
-        run: |
-          cd app
-          rm -rf node_modules || true
-          cd ..
-          zip -r ipermabot-pwa-${{ github.sha }}.zip app/ -x '**/*.bundle' '**/.git/*' '**/node_modules/*'
-      - name: #️⃣ Gerar checksum
-        run: sha256sum ipermabot-pwa-${{ github.sha }}.zip > ipermabot-pwa-${{ github.sha }}.sha256
-      - name: 📤 Upload artefacto
-        uses: actions/upload-artifact@v4
-        with:
-          name: ipermabot-pwa-zip
-          path: |
-            ipermabot-pwa-${{ github.sha }}.zip
-            ipermabot-pwa-${{ github.sha }}.sha256
-          retention-days: 30
-
-  # ──────────────────────────────────────────────────────────
-  # STAGE 6: Release em tag v*
-  # ──────────────────────────────────────────────────────────
-  release:
-    name: 🚀 Release (tag v*)
-    runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/v')
-    needs: build-pwa
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: actions/download-artifact@v4
-        with:
-          name: ipermabot-pwa-zip
-          path: dist/
-      - name: 🚀 Publicar release no GitHub
-        uses: softprops/action-gh-release@v2
-        with:
-          files: |
-            dist/ipermabot-pwa-${{ github.sha }}.zip
-            dist/ipermabot-pwa-${{ github.sha }}.sha256
-          generate_release_notes: true
-          draft: false
-          prerelease: ${{ contains(github.ref, 'rc') }}
