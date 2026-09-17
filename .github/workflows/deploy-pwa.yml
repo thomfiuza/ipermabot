@@ -27,9 +27,8 @@ jobs:
         uses: actions/configure-pages@v5
       - name: Preparar artefato
         run: |
-          mkdir -p dist/app
-          cp -r app/. dist/app/
-          echo "OK" > dist/app/DEPLOY_OK.txt
+          mkdir -p dist
+          cp -r app/. dist/
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
