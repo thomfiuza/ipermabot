@@ -20,19 +20,20 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-
     steps:
-      - name: Checkout
+      - name: Baixar codigo
         uses: actions/checkout@v4
-
       - name: Setup Pages
         uses: actions/configure-pages@v5
-
+      - name: Preparar artefato
+        run: |
+          mkdir -p dist/app
+          cp -r app/. dist/app/
+          echo "OK" > dist/app/DEPLOY_OK.txt
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'app'
-
-      - name: Deploy to GitHub Pages
+          path: dist
+      - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
